@@ -17,6 +17,9 @@ const envVarsSchema = Joi.object()
     REDIS_URL: Joi.string().required(),
 
     BERA_RPC: Joi.string().required(),
+
+    PASSPHRASE: Joi.string().required(),
+    JWT_SECRET: Joi.string().required(),
   })
   .unknown();
 
@@ -32,6 +35,11 @@ export const env = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   workerPort: envVars.WORKER_PORT,
+
+  keys: {
+    passphrase: envVars.PASSPHRASE,
+    jwtSecret: envVars.JWT_SECRET,
+  },
 
   postgres: {
     url: envVars.POSTGRES_URL,

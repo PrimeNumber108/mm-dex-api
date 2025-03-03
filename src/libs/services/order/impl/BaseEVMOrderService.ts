@@ -1,4 +1,3 @@
-import { CreateSwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, QueryTransferOrderDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IWalletService } from "../../wallet/IWalletService";
@@ -32,7 +31,6 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
     async getSrcWallet(params: CreateBaseOrderDto) {
         const walletDto = await this.walletService.assertWalletForExecution({
             address: params.account,
-            chain: params.chain
         });
         return new Wallet(walletDto.privateKey, this.provider);
     }
@@ -82,11 +80,10 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
 
         return res.hash;
     }
-    
+
     async transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto> {
         await this.walletService.assertKnownAccount({
             address: params.recipient,
-            chain: params.chain
         });
         const senderWallet = await this.getSrcWallet(params);
         const token = await this.tokenService.assertKnownToken({ address: params.token, chain: params.chain });
@@ -149,7 +146,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const walletDtos = await this.walletService.assertWalletsForExecution(params.senders);
         const wallets = walletDtos.map(w => new Wallet(w.privateKey, this.provider));
         const token = await this.tokenService.assertKnownToken({ address: params.token, chain: params.chain });
-        const recipient = await this.walletService.assertKnownAccount({ address: params.recipient, chain: params.chain });
+        const recipient = await this.walletService.assertKnownAccount({ address: params.recipient });
         const creationDtos = await Promise.all(
             wallets.map(async (wallet, idx) => {
                 try {

@@ -1,5 +1,5 @@
 import { ApiResponseProperty, OmitType } from "@nestjs/swagger";
-import { BaseResponse } from "src/utils/base/base-response";
+import { BaseResponse } from "src/libs/base/base-response";
 import { UserRole } from "../user.entity";
 
 export class UserDto extends BaseResponse{
@@ -9,7 +9,8 @@ export class UserDto extends BaseResponse{
     apiSecret: string;
 
     @ApiResponseProperty({ enum: UserRole })
-    userRole: UserRole;
+    role: UserRole;
 }
 
 export class UserResponseDto extends OmitType(UserDto, ['apiSecret']) {}
+export class UserPublicDto extends UserResponseDto {}

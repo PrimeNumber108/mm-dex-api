@@ -10,9 +10,6 @@ export class QueryWalletDto {
     index?: number;
 
     @ApiPropertyOptional({type: String})
-    chain?: string; 
-
-    @ApiPropertyOptional({type: String})
     cluster?: string;
 }
 
@@ -37,9 +34,6 @@ export class QueryWalletsDto {
     @ApiProperty({ type: String }) // Made required
     @IsOptional()
     cluster?: string;
-
-    @ApiPropertyOptional({type: String})
-    chain?: string;
 
     @ApiProperty({ type: Number, required: false})
     @Type(() => Number)

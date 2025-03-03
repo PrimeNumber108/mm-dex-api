@@ -7,20 +7,11 @@ export class ImportWalletDto {
     @IsString()
     privateKey: string;
 
-    @ApiProperty({type: String})
-    @IsNotEmpty()
-    @IsString()
-    chain: string;
-
     @ApiPropertyOptional({type: String})
     cluster?: string;
 }
 
 export class GenerateWalletDto {
-    @ApiProperty({type: String})
-    @IsNotEmpty()
-    @IsString()
-    chain: string;
 
     @ApiPropertyOptional({type: String})
     cluster?: string;
@@ -32,12 +23,7 @@ export class ImportClusterDto {
     @IsArray()
     @ArrayMinSize(1) // Ensures at least one private key is provided
     @IsString({ each: true }) // Validates each item in the array as a string
-    privateKey: string[];
-
-    @ApiProperty({ type: String })
-    @IsNotEmpty()
-    @IsString()
-    chain: string;
+    privateKeys: string[];
 
     @ApiProperty({ type: String }) // Made required
     @IsNotEmpty()
@@ -50,11 +36,6 @@ export class GenerateClusterDto {
     @IsInt()
     @Min(1)
     numOfKeys: number;
-
-    @ApiProperty({ type: String })
-    @IsNotEmpty()
-    @IsString()
-    chain: string;
 
     @ApiProperty({ type: String }) // Made required
     @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from "@nestjs/swagger";
-import { BaseResponse } from "src/utils/base/base-response";
+import { BaseResponse } from "src/libs/base/base-response";
 
 export class CreateBaseOrderDto {
     @ApiProperty({ type: String })

@@ -1,0 +1,84 @@
+import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "src/modules/wallet/dtos/query-wallet.dto";
+import { GenerateClusterDto, ImportClusterDto, ImportWalletDto, GenerateWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
+import { WalletPrivateResponseDto, WalletResponseDto } from "src/modules/wallet/dtos/wallet.dto";
+import { IWalletService } from "../IWalletService";
+import { Repository } from "typeorm";
+import { Wallet } from "src/modules/wallet/wallet.entity";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+
+export abstract class BaseWalletService implements IWalletService {
+    constructor(
+        readonly chain: string,
+        protected readonly walletRepo: Repository<Wallet>
+    ) { }
+
+    static hidePrivateInfo(wallet: Wallet): WalletResponseDto {
+        const {
+            privateKey, ...rest
+        } = wallet;
+        return rest
+    }
+
+    async getCluster(params: QueryClusterDto): Promise<WalletResponseDto[]> {
+        const queryBuilder = this.walletRepo.createQueryBuilder("wallet")
+            .where("wallet.cluster = :cluster", { cluster: params.cluster });
+
+        if (params.fromIndex) {
+            queryBuilder.andWhere("wallet.index >= :fromIndex", { fromIndex: params.fromIndex });
+        }
+        if (params.toIndex) {
+            queryBuilder.andWhere("wallet.index < :toIndex", { toIndex: params.toIndex });
+        }
+
+        queryBuilder.orderBy("wallet.index", "ASC");
+
+        return (await queryBuilder.getMany()).map(BaseWalletService.hidePrivateInfo); // Ensures correct entity mapping
+    }
+
+    async assertWalletForExecution(params: QueryWalletDto): Promise<WalletPrivateResponseDto> {
+        const wallet = await this.walletRepo.findOneBy(params);
+        if (!wallet) throw new NotFoundException("Wallet not found");
+        return wallet;
+    }
+    async assertWalletsForExecution(params: QueryWalletsDto): Promise<WalletPrivateResponseDto[]> {
+        const queryBuilder = this.walletRepo.createQueryBuilder("wallet")
+        if (params.accounts) {
+            return await queryBuilder
+                .where("wallet.address IN (...accounts)", { accounts: params.accounts })
+                .getMany()
+        }
+        if (!params.cluster) {
+            throw new BadRequestException("Must provide cluster or accounts");
+        }
+        queryBuilder.where("wallet.cluster = :cluster", { cluster: params.cluster });
+
+        if (params.fromIndex) {
+            queryBuilder.andWhere("wallet.index >= :fromIndex", { fromIndex: params.fromIndex });
+        }
+        if (params.toIndex) {
+            queryBuilder.andWhere("wallet.index < :toIndex", { toIndex: params.toIndex });
+        }
+
+        queryBuilder.orderBy("wallet.index", "ASC");
+
+    }
+    async assertKnownAccount(params: QueryWalletDto): Promise<string> {
+        return (await this.assertWalletForExecution(params)).address;
+    }
+    async assertKnownAccounts(params: QueryWalletsDto): Promise<string[]> {
+        return (await this.assertWalletsForExecution(params)).map(w => w.address);
+    }
+    generateCluster(params: GenerateClusterDto): Promise<WalletPrivateResponseDto[]> {
+        throw new Error("Method not implemented.");
+    }
+    importCluster(params: ImportClusterDto): Promise<WalletPrivateResponseDto[]> {
+        throw new Error("Method not implemented.");
+    }
+    importWallet(params: ImportWalletDto): Promise<WalletPrivateResponseDto> {
+        throw new Error("Method not implemented.");
+    }
+    generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto> {
+        throw new Error("Method not implemented.");
+    }
+
+}

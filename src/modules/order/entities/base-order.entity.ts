@@ -1,4 +1,4 @@
-import { BaseEntity } from 'src/utils/base/base-entity';
+import { BaseEntity } from 'src/libs/base/base-entity';
 import { Column, ColumnOptions, Index } from 'typeorm';
 
 @Index(['username'])

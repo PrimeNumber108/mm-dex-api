@@ -1,18 +1,18 @@
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "src/modules/wallet/dtos/query-wallet.dto";
 import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
-import { ClusterPrivateResponseDto, ClusterResponseDto, WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
+import { WalletPrivateResponseDto, WalletResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 
 export interface IWalletService {
     readonly chain: string;
 
-    getCluster(params: QueryClusterDto): Promise<ClusterResponseDto>;
+    getCluster(params: QueryClusterDto): Promise<WalletResponseDto[]>;
     assertWalletForExecution(params: QueryWalletDto): Promise<WalletPrivateResponseDto>;
     assertWalletsForExecution(params: QueryWalletsDto): Promise<WalletPrivateResponseDto[]>;
     assertKnownAccount(params: QueryWalletDto): Promise<string>;
     assertKnownAccounts(params: QueryWalletsDto): Promise<string[]>;
 
-    generateCluster(params: GenerateClusterDto): Promise<ClusterPrivateResponseDto>;
-    importCluster(params: ImportClusterDto): Promise<ClusterPrivateResponseDto>;
+    generateCluster(params: GenerateClusterDto): Promise<WalletPrivateResponseDto[]>;
+    importCluster(params: ImportClusterDto): Promise<WalletPrivateResponseDto[]>;
     importWallet(params: ImportWalletDto): Promise<WalletPrivateResponseDto>;
     generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto>;
     // deactivateWallet(params: QueryWalletDto): Promise<string>; // return private key

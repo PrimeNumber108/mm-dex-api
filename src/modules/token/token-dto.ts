@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
-import { BaseResponse } from "src/utils/base/base-response";
+import { BaseResponse } from "src/libs/base/base-response";
 
 export class PairDataDto {
     @ApiResponseProperty({type: String })

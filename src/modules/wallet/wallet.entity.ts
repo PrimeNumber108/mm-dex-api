@@ -1,21 +1,22 @@
-import { BaseEntity } from 'src/utils/base/base-entity';
+import { BaseEntity } from 'src/libs/base/base-entity';
+import { TypeormTransformers } from 'src/libs/utils/transformers';
 import { Column, Entity, Index } from 'typeorm';
 
 @Entity()
-@Index(['chain', 'address', 'cluster'], { unique: true })
+@Index(['address'], { unique: true })
+@Index(['cluster'], { unique: true })
 export class Wallet extends BaseEntity {
 
-  @Column({nullable: false, type: 'number'})
+  @Column({ nullable: false, type: 'number' })
   index: number;
-  
+
   @Column({ nullable: false })
   address: string;
 
-  @Column({ nullable: false })
+  @Column({
+    nullable: false, transformer: TypeormTransformers.encryptionTransformer
+  })
   privateKey: string;
-
-  @Column({ nullable: false })
-  chain: string;
 
   @Column({ nullable: false, default: 'no' })
   cluster: string;

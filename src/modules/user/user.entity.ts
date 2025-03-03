@@ -1,4 +1,5 @@
-import { BaseEntity } from 'src/utils/base/base-entity';
+import { BaseEntity } from 'src/libs/base/base-entity';
+import { TypeormTransformers } from 'src/libs/utils/transformers';
 import { Column, Entity, Index } from 'typeorm';
 
 export enum UserRole {
@@ -11,7 +12,7 @@ export class User extends BaseEntity {
     @Column({ nullable: false })
     username: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: false, transformer: TypeormTransformers.encryptionTransformer })
     apiSecret: string;
 
     @Column({ nullable: false, enum: UserRole })
