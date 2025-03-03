@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { Resolution } from './enum';
 
 export const getTimestampInSeconds = () => {
   // Get the current timestamp in milliseconds
@@ -7,33 +6,6 @@ export const getTimestampInSeconds = () => {
 
   // Convert milliseconds to seconds and return
   return Math.floor(timestampMs / 1000);
-};
-
-export const getSpecificTimeInSeconds = (
-  date: Date | undefined = undefined,
-) => {
-  if (!date) {
-    return getTimestampInSeconds();
-  }
-  return Math.floor(date.getTime() / 1000);
-};
-
-//date is timestamp in second
-export const getTimeWithResolution = (
-  date: number,
-  resolution: Resolution | string,
-) => {
-  return date - (date % +resolution);
-};
-
-export const getTimeNowWithResolution = (resolution: Resolution) => {
-  const date = getTimestampInSeconds();
-
-  return getTimeWithResolution(date, resolution);
-};
-
-export const getTimeWithOneDayResolution = (date: number) => {
-  return getTimeWithResolution(date, Resolution.OneDay);
 };
 
 export function normalizeNumber(number: string): number {
