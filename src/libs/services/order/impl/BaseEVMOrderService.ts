@@ -1,10 +1,10 @@
-import { CreateSwapOrderDto, SwapOrderResponseDto, BatchedSwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
+import { CreateSwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, QueryTransferOrderDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IWalletService } from "../../wallet/IWalletService";
 import { CreateBaseOrderDto } from "src/modules/order/dtos/base-order.dto";
 import { JsonRpcProvider, parseUnits, TransactionRequest, Wallet } from "ethers";
-import { NetworkConfigs } from "src/libs/web3/provider";
+import { NetworkConfigs } from "src/libs/consts";
 import { BaseOrderService } from "./BaseOrderService";
 import { Repository } from "typeorm";
 import { TransferOrder } from "src/modules/order/entities/transfer-order.entity";
@@ -82,13 +82,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
 
         return res.hash;
     }
-
-    executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
-        throw new Error("Method not implemented.");
-    }
-    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<BatchedSwapOrderResponseDto> {
-        throw new Error("Method not implemented.");
-    }
+    
     async transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto> {
         await this.walletService.assertKnownAccount({
             address: params.recipient,

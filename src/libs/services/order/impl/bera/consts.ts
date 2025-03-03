@@ -1,0 +1,7 @@
+
+export namespace BerachainConsts {
+    export const KODIAK_ROUTER = '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4';
+    export const KODIAK_ROUTER_V2 = '0xd91dd58387Ccd9B66B390ae2d7c66dBD46BC6022';
+    export const HOLD_ADDRESS = '0xFF0a636Dfc44Bb0129b631cDd38D21B613290c98';
+    export const HOLDSO_ROUTER_ADDRESS = '0x3982F5CcbaE0cdA43fb7b3c669EecB361E012dcC';
+}

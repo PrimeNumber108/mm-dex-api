@@ -1,4 +1,4 @@
-import { CreateSwapOrderDto, SwapOrderResponseDto, BatchedSwapOrderResponseDto, QuerySwapOrderDto } from "src/modules/order/dtos/swap-order.dto";
+import { CreateSwapOrderDto, SwapOrderResponseDto, QuerySwapOrderDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, QueryTransferOrderDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto, QueryWithdrawalOrderDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IOrderService } from "../IOrderService";
@@ -25,7 +25,7 @@ export abstract class BaseOrderService implements IOrderService {
     executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
         throw new Error("Method not implemented.");
     }
-    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<BatchedSwapOrderResponseDto> {
+    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<SwapOrderResponseDto[]> {
         throw new Error("Method not implemented.");
     }
     transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto> {

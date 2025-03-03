@@ -1,4 +1,4 @@
-import { BatchedSwapOrderResponseDto, CreateSwapOrderDto, QuerySwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
+import { CreateSwapOrderDto, QuerySwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, CreateTransferOrderDto, QueryTransferOrderDto, TransferOrderResponseDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
 
@@ -9,7 +9,7 @@ export interface IOrderService {
         params: CreateSwapOrderDto
     ): Promise<SwapOrderResponseDto>;
 
-    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<BatchedSwapOrderResponseDto>;
+    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<SwapOrderResponseDto[]>;
 
     transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto>;
     transferInBatch(params: CreateBatchedTransferDto): Promise<TransferOrderResponseDto[]>;

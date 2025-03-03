@@ -78,8 +78,3 @@ export class SwapOrderResponseDto extends BaseOrderResponseDto {
     @ApiResponseProperty({ type: String })
     amountOutMin: string;
 }
-
-export class BatchedSwapOrderResponseDto {
-    @ApiResponseProperty({ type: [SwapOrderResponseDto]})
-    orders: SwapOrderResponseDto
-}

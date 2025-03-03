@@ -15,3 +15,5 @@ export const NetworkConfigs: {[key: string]: NetworkConfig} = {
   }
 }
 
+export const NATIVE = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+

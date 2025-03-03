@@ -1,6 +1,22 @@
 import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
 import { BaseResponse } from "src/utils/base/base-response";
+
+export class PairDataDto {
+    @ApiResponseProperty({type: String })
+    pair: string;
+
+    @ApiResponseProperty({type: String })
+    otherToken: string;
+
+    @ApiResponseProperty({type: String })
+    @IsOptional()
+    fee?: string;
+
+    @ApiResponseProperty({type: String })
+    protocol: string;
+}
 
 export class TokenResponseDto extends BaseResponse {
     @ApiResponseProperty({ type: String })
@@ -18,13 +34,8 @@ export class TokenResponseDto extends BaseResponse {
     @ApiResponseProperty({ type: Number })
     decimals: number;
 
-    @ApiResponseProperty({ type: String })
-    @IsOptional()
-    pair?: string;
-
-    @ApiResponseProperty({ type: String })
-    @IsOptional()
-    protocol?: string;
+    @ApiResponseProperty({ type: [PairDataDto] })
+    pairData: PairDataDto[];
 }
 
 export class QueryTokenDto {
@@ -39,14 +50,21 @@ export class QueryTokenDto {
 
     @ApiPropertyOptional({ type: String })
     symbol?: string;
+}
 
-    @ApiResponseProperty({ type: String })
-    @IsOptional()
-    pair?: string;
+export class CreatePairDataDto {
+    @ApiProperty({type: String })
+    pair: string;
 
-    @ApiResponseProperty({ type: String })
+    @ApiProperty({type: String })
+    otherToken: string;
+
+    @ApiPropertyOptional({type: String })
     @IsOptional()
-    protocol?: string;
+    fee?: string;
+
+    @ApiProperty({type: String })
+    protocol: string;
 }
 
 export class CreateTokenDto {
@@ -65,11 +83,7 @@ export class CreateTokenDto {
     @ApiProperty({ type: Number })
     decimals: number;
 
-    @ApiResponseProperty({ type: String })
-    @IsOptional()
-    pair?: string;
-
-    @ApiResponseProperty({ type: String })
-    @IsOptional()
-    protocol?: string;
+    @ApiProperty({ type: [CreatePairDataDto] })
+    @Type(() => CreatePairDataDto)
+    pairData: CreatePairDataDto[];
 }
