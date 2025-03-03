@@ -10,14 +10,13 @@ const envVarsSchema = Joi.object()
       .valid('production', 'development', 'test', 'local', 'staging')
       .required(),
     PORT: Joi.number().default(3000),
-    NETWORK: Joi.string().default('mainnet').valid('mainnet', 'testnet'),
     WORKER_PORT: Joi.number().default(3001),
 
     POSTGRES_URL: Joi.string().required(),
 
     REDIS_URL: Joi.string().required(),
 
-    RPC: Joi.string().required(),
+    BERA_RPC: Joi.string().required(),
   })
   .unknown();
 
@@ -33,7 +32,6 @@ export const env = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   workerPort: envVars.WORKER_PORT,
-  network: envVars.NETWORK,
 
   postgres: {
     url: envVars.POSTGRES_URL,
@@ -44,9 +42,6 @@ export const env = {
     url: envVars.REDIS_URL,
   },
   web3: {
-    rpc: envVars.RPC,
+    beraRpc: envVars.BERA_RPC,
   },
 };
-
-export const isMainnet = env.network === 'mainnet';
-export const isTestnet = env.network === 'testnet';

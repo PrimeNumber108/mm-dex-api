@@ -49,7 +49,8 @@ export class CreateSwapOrderDto extends CreateBaseOrderDto {
 
 export class SwapOrderRequestDto extends OmitType(CreateBaseOrderDto, [
     'chain',
-    'username'
+    'username',
+    'txHash'
 ]) {}
 
 export class BatchedSwapOrderRequestDto {

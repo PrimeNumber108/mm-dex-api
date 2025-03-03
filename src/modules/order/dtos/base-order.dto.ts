@@ -10,10 +10,8 @@ export class CreateBaseOrderDto {
 
     @ApiProperty({ type: String })
     account: string;
-}
 
-export class BaseFinalizedOrderDto extends CreateBaseOrderDto {
-    txHash: string
+    txHash: string;
 }
 
 export class QueryBaseOrderDto {

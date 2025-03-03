@@ -44,7 +44,7 @@ export class TransferOrderResponseDto extends BaseOrderResponseDto {
 }
 
 export class TransferOrderRequestDto extends OmitType(CreateTransferOrderDto,
-    ['chain', 'username']
+    ['chain', 'username', 'txHash']
 ) { }
 
 export class CreateBatchedTransferDto extends CreateBaseOrderDto {
@@ -61,47 +61,27 @@ export class CreateBatchedTransferDto extends CreateBaseOrderDto {
 
 export class BatchedTransferRequestDto extends OmitType(CreateBatchedTransferDto, [
     'chain',
-    'username'
+    'username',
+    'txHash'
 ]) { }
 
-export class CreateDistributionDto extends CreateBaseOrderDto {
+export class CreateBatchedTransferMultiSendersDto extends CreateBaseOrderDto {
     @ApiProperty({ type: QueryWalletsDto })
     @Type(() => QueryWalletsDto)
-    middleWallets: QueryWalletsDto;
-
-    @ApiProperty({ type: QueryWalletsDto })
-    @Type(() => QueryWalletsDto)
-    endWallets: QueryWalletsDto;
+    senders: QueryWalletsDto;
 
     @ApiProperty({ type: String })
     token: string;
 
-    @ApiProperty({ type: [String] })
-    endAmounts: string[];
-}
-
-export class DistributionRequestDto extends OmitType(CreateDistributionDto, [
-    'chain',
-    'username'
-]) { }
-
-export class CreateGatheringDto extends CreateBaseOrderDto {
-    @ApiProperty({ type: QueryWalletsDto })
-    @Type(() => QueryWalletsDto)
-    middleWallets: QueryWalletsDto;
-
-    @ApiProperty({ type: QueryWalletsDto })
-    @Type(() => QueryWalletsDto)
-    endWallets: QueryWalletsDto;
-
     @ApiProperty({ type: String })
-    token: string;
+    recipient: string;
 
     @ApiProperty({ type: [String] })
-    endAmounts: string[];
+    amounts: string[];
 }
 
-export class GatheringRequestDto extends OmitType(CreateGatheringDto, [
+export class BatchedTransferMultiSendersRequestDto extends OmitType(CreateBatchedTransferMultiSendersDto, [
     'chain',
-    'username'
+    'username',
+    'txHash'
 ]) { }

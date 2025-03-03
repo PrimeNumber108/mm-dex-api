@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { BaseOrder } from './base-order.entity';
+import { BaseOrder, floatOptions } from './base-order.entity';
 
 @Entity()
 export class SwapOrder extends BaseOrder {
@@ -15,9 +15,9 @@ export class SwapOrder extends BaseOrder {
   @Column({ nullable: false })
   protocol: string;
 
-  @Column({ type: 'bigint', nullable: false })
+  @Column(floatOptions)
   amountIn: string;
 
-  @Column({ type: 'bigint', nullable: false })
+  @Column(floatOptions)
   amountOutMin: string;
 }

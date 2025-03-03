@@ -43,5 +43,5 @@ export class WithdrawalOrderResponseDto extends BaseOrderResponseDto {
 
 
 export class WithdrawalOrderRequestDto extends OmitType(CreateWithdrawalOrderDto, 
-    ['chain', 'username']
+    ['chain', 'username', 'txHash']
 ) {}

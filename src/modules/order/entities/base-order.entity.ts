@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/utils/base/base-entity';
-import { Column, Index } from 'typeorm';
+import { Column, ColumnOptions, Index } from 'typeorm';
 
 @Index(['username'])
 @Index(['account', 'chain'])
@@ -15,4 +15,11 @@ export abstract class BaseOrder extends BaseEntity {
 
   @Column({ nullable: false })
   txHash: string;
+}
+
+export const floatOptions: ColumnOptions = {
+  type: 'numeric',
+  precision: 27,
+  scale: 18,
+  nullable: false
 }

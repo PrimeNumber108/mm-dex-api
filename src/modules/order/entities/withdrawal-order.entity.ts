@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { BaseOrder } from './base-order.entity';
+import { BaseOrder, floatOptions } from './base-order.entity';
 
 @Entity()
 export class WithdrawalOrder extends BaseOrder {
@@ -9,6 +9,6 @@ export class WithdrawalOrder extends BaseOrder {
   @Column({ nullable: false })
   recipient: string;
 
-  @Column({ type: 'bigint', nullable: false })
+  @Column(floatOptions)
   amount: string;
 }
