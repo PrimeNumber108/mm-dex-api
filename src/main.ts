@@ -54,9 +54,16 @@ async function bootstrap() {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('MM Executor API')
       .setVersion('0.0.1')
-      .addApiKey({ type: 'apiKey', name: 'x-api-secret', in: 'header' }, 'x-api-secret')
-      .addApiKey({ type: 'apiKey', name: 'username', in: 'header' }, 'username')
+      .addApiKey(
+        { type: 'apiKey', name: 'x-api-secret', in: 'header' },
+        'x-api-secret'
+      )
+      .addApiKey(
+        { type: 'apiKey', name: 'username', in: 'header' },
+        'username'
+      )
       .build();
+
 
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('swagger', app, swaggerDocument, {

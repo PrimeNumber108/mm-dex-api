@@ -1,5 +1,5 @@
 import { Controller, Delete, Post, Put } from "@nestjs/common";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { Roles } from "src/decorators/roles.decorator";
 import { UserRole } from "./user.entity";
@@ -7,6 +7,8 @@ import { UserResponseDto } from "./dtos/user.dto";
 import { CreateUserDto, RemoveUserDto, RotateApiKeyDto, UpdateUserDto } from "./dtos/upsert-user.dto";
 
 @ApiTags('User')
+@ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
+@ApiSecurity('username') // Ensure Swagger includes username
 @Controller('user')
 export class UserController {
     constructor(

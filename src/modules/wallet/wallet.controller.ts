@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Wallet } from "./wallet.entity";
 import { Repository } from "typeorm";
 import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFactory";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/decorators/roles.decorator";
 import { UserRole } from "../user/user.entity";
 import { EncryptedDto, GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto } from "./dtos/upsert-wallet.dto";
@@ -12,6 +12,8 @@ import { WalletResponseDto } from "./dtos/wallet.dto";
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-wallet.dto";
 
 @ApiTags('Wallet')
+@ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
+@ApiSecurity('username') // Ensure Swagger includes username
 @Controller('wallet')
 export class WalletController {
     private readonly factory: WalletServiceFactory;

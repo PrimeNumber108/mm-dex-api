@@ -1,9 +1,11 @@
 import { Controller, Delete, Get, Post, Put, Query } from "@nestjs/common";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { TokenService } from "./token.service";
 import { CreateTokenDto, QueryTokenDto, TokenResponseDto, UpdateTokenDto } from "./token-dto";
 
 @ApiTags('Token')
+@ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
+@ApiSecurity('username') // Ensure Swagger includes username
 @Controller('token')
 export class TokenController {
     constructor(

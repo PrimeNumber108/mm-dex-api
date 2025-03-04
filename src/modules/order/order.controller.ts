@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrderServiceFactory } from "src/libs/services/order/OrderServiceFactory";
 import { TransferOrder } from "./entities/transfer-order.entity";
@@ -15,6 +15,8 @@ import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderRespo
 import { BaseOrderWithTagResponseDto, QueryBaseOrderDto } from "./dtos/base-order.dto";
 
 @ApiTags('Order')
+@ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
+@ApiSecurity('username') // Ensure Swagger includes username
 @Controller('order')
 export class OrderController {
     private readonly factory: OrderServiceFactory;
