@@ -10,6 +10,7 @@ import { NotFoundException } from "@nestjs/common";
 import { KodiakSwapper } from "./KodiakV2Swapper";
 import { parseUnits } from "ethers";
 import { HoldsoSwapper } from "./HoldsoSwapper";
+import { PairService } from "src/modules/pair/pair.service";
 
 export class BerachainOrderService extends BaseEVMOrderService {
     constructor(
@@ -17,27 +18,24 @@ export class BerachainOrderService extends BaseEVMOrderService {
         withdrawalRepo: Repository<WithdrawalOrder>,
         swapRepo: Repository<SwapOrder>,
         tokenService: TokenService,
-        walletService: IWalletService) {
-        super("berachain", transferRepo, withdrawalRepo, swapRepo, tokenService, walletService);
+        pairService: PairService,
+        walletService: IWalletService
+    ) {
+        super("berachain", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
     }
 
     async executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
-        const tokenIn = await this.tokenService.assertKnownToken({address: params.tokenIn, chain: this.chain});
-        if(!tokenIn.pairData[params.protocol]) throw new NotFoundException("Protocol is not supported for the token");
-        const {
-            fee, otherToken
-        } = tokenIn.pairData[params.protocol];
-        if(otherToken !== params.tokenOut) throw new NotFoundException("Token out is not support for the swap");
-        const tokenOut = await this.tokenService.assertKnownToken({address: params.tokenOut, chain: this.chain});
+        const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
+        const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
 
         const wallet = await this.getSrcWallet(params);
         let txHash: string;
         switch (params.protocol) {
             case "kodiak-v2": {
                 txHash = await KodiakSwapper.executeSwap(
-                    wallet, 
-                    params.tokenIn, 
-                    params.tokenOut, 
+                    wallet,
+                    params.tokenIn,
+                    params.tokenOut,
                     parseUnits(params.amountIn, tokenIn.decimals),
                     parseUnits(params.amountOutMin, tokenOut.decimals),
                     params.recipient
@@ -45,19 +43,26 @@ export class BerachainOrderService extends BaseEVMOrderService {
                 break;
             }
             case "holdso": {
-                if(isNaN(fee)) throw new NotFoundException("Hold.so Fee config not found for the pair");
+                const isTokenIn0 = BigInt(params.tokenIn) < BigInt(params.tokenOut);
+
+                const pair = await this.pairService.assertKnownPair({
+                    chain: params.chain,
+                    protocol: params.protocol,
+                    token0: isTokenIn0 ? params.tokenIn : params.tokenOut,
+                    token1: isTokenIn0 ? params.tokenOut : params.tokenIn
+                })
                 txHash = await HoldsoSwapper.executeSwap(
-                    wallet, 
-                    params.tokenIn, 
-                    params.tokenOut, 
-                    BigInt(fee),
+                    wallet,
+                    params.tokenIn,
+                    params.tokenOut,
+                    BigInt(pair.fee),
                     parseUnits(params.amountIn, tokenIn.decimals),
                     parseUnits(params.amountOutMin, tokenOut.decimals),
                     params.recipient
                 );
                 break;
             }
-            
+
             default: {
                 throw new NotFoundException("Protocol is not supported");
             }

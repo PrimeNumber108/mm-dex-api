@@ -1,22 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
 import { BaseResponse } from "src/libs/base/base-response";
-
-export class PairDataDto {
-    @ApiResponseProperty({type: String })
-    pair: string;
-
-    @ApiResponseProperty({type: String })
-    otherToken: string;
-
-    @ApiResponseProperty({type: String })
-    @IsOptional()
-    fee?: string;
-
-    @ApiResponseProperty({type: String })
-    protocol: string;
-}
 
 export class TokenResponseDto extends BaseResponse {
     @ApiResponseProperty({ type: String })
@@ -33,9 +17,6 @@ export class TokenResponseDto extends BaseResponse {
 
     @ApiResponseProperty({ type: Number })
     decimals: number;
-
-    @ApiResponseProperty({ type: [PairDataDto] })
-    pairData: PairDataDto[];
 }
 
 export class QueryTokenDto {
@@ -50,21 +31,6 @@ export class QueryTokenDto {
 
     @ApiPropertyOptional({ type: String })
     symbol?: string;
-}
-
-export class CreatePairDataDto {
-    @ApiProperty({type: String })
-    pair: string;
-
-    @ApiProperty({type: String })
-    otherToken: string;
-
-    @ApiPropertyOptional({type: String })
-    @IsOptional()
-    fee?: string;
-
-    @ApiProperty({type: String })
-    protocol: string;
 }
 
 export class CreateTokenDto {
@@ -82,10 +48,6 @@ export class CreateTokenDto {
 
     @ApiProperty({ type: Number })
     decimals: number;
-
-    @ApiProperty({ type: [CreatePairDataDto] })
-    @Type(() => CreatePairDataDto)
-    pairData: CreatePairDataDto[];
 }
 
 export class UpdateTokenDto {
@@ -103,29 +65,4 @@ export class UpdateTokenDto {
 
     @ApiPropertyOptional({ type: Number })
     decimals?: number;
-
-    @ApiPropertyOptional({ type: [CreatePairDataDto] })
-    @Type(() => CreatePairDataDto)
-    pairData?: CreatePairDataDto[];
-}
-
-export function encodePairData(pairData: PairDataDto[]) {
-    const json = {};
-    for (const item of pairData) {
-        const { protocol, ...rest } = item;
-        json[protocol] = { ...rest };
-    }
-    return JSON.stringify(json);
-}
-
-export function decodePairData(encoded: string) {
-    const json = JSON.parse(encoded);
-    const pairData: PairDataDto[] = [];
-    for (const [protocol, data] of Object.entries(json)) {
-        pairData.push({
-            protocol,
-            ...(data as any)
-        })
-    }
-    return pairData
 }

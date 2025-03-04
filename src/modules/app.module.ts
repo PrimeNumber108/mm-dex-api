@@ -14,6 +14,7 @@ import { OrderModule } from './order/order.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { AuthModule } from './auth/auth.module';
+import { PairModule } from './pair/pair.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     AuthModule,
     TokenModule,
+    PairModule,
     WalletModule,
     OrderModule,
   ],

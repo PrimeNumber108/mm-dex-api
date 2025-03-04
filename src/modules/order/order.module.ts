@@ -6,6 +6,7 @@ import { TransferOrder } from "./entities/transfer-order.entity";
 import { WithdrawalOrder } from "./entities/withdrawal-order.entity";
 import { SwapOrder } from "./entities/swap-order.entity";
 import { Wallet } from "../wallet/wallet.entity";
+import { PairModule } from "../pair/pair.module";
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { Wallet } from "../wallet/wallet.entity";
         SwapOrder,
         Wallet
     ]),
-    TokenModule
+    TokenModule,
+    PairModule
   ],
   controllers: [OrderController],
   providers: [],

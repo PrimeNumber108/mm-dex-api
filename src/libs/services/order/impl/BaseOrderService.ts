@@ -10,6 +10,7 @@ import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "../../wallet/IWalletService";
 import { PollOrderDto, BaseOrderWithTagResponseDto, BaseOrderResponseDto } from "src/modules/order/dtos/base-order.dto";
 import { BaseOrder } from "src/modules/order/entities/base-order";
+import { PairService } from "src/modules/pair/pair.service";
 
 export abstract class BaseOrderService implements IOrderService {
     constructor(
@@ -18,6 +19,7 @@ export abstract class BaseOrderService implements IOrderService {
         protected readonly withdrawalRepo: Repository<WithdrawalOrder>,
         protected readonly swapRepo: Repository<SwapOrder>,
         protected readonly tokenService: TokenService,
+        protected readonly pairService: PairService,
         protected readonly walletService: IWalletService
     ){
 

@@ -1,6 +1,5 @@
 import { ValueTransformer } from "typeorm";
 import { CryptoHelper } from "./crypto-helper";
-import { decodePairData, encodePairData } from "src/modules/token/token-dto";
 
 export namespace TypeormTransformers {
   export const encryptionTransformer: ValueTransformer = {
@@ -9,15 +8,6 @@ export namespace TypeormTransformers {
     },
     from(value: string) {
       return CryptoHelper.decrypt(value);
-    }
-  }
-
-  export const pairDataTransformer: ValueTransformer = {
-    to(value) {
-      return encodePairData(value)
-    },
-    from(value: string) {
-      return decodePairData(value)
     }
   }
 

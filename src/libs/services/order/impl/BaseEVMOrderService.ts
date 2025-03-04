@@ -12,6 +12,7 @@ import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
 import { ERC20__factory } from "src/contracts";
 import { TokenService } from "src/modules/token/token.service";
 import { BadRequestException } from "@nestjs/common";
+import { PairService } from "src/modules/pair/pair.service";
 
 export abstract class BaseEVMOrderService extends BaseOrderService {
 
@@ -23,8 +24,10 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         withdrawalRepo: Repository<WithdrawalOrder>,
         swapRepo: Repository<SwapOrder>,
         tokenService: TokenService,
-        walletService: IWalletService) {
-        super(chain, transferRepo, withdrawalRepo, swapRepo, tokenService, walletService);
+        pairService: PairService,
+        walletService: IWalletService
+    ) {
+        super(chain, transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
         this.provider = new JsonRpcProvider(NetworkConfigs[this.chain].rpc);
     }
 

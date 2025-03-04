@@ -6,6 +6,7 @@ import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
 import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "../wallet/IWalletService";
 import { NotFoundException } from "@nestjs/common";
+import { PairService } from "src/modules/pair/pair.service";
 
 export class OrderServiceFactory {
     constructor(
@@ -13,6 +14,7 @@ export class OrderServiceFactory {
         readonly withdrawalRepo: Repository<WithdrawalOrder>,
         readonly swapRepo: Repository<SwapOrder>,
         readonly tokenService: TokenService,
+        readonly pairService: PairService,
         readonly walletService: IWalletService
     ) { }
     getOrderService(
@@ -21,7 +23,7 @@ export class OrderServiceFactory {
         switch (chain) {
             case "berachain":
                 return new BerachainOrderService(
-                    this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.walletService
+                    this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
 
             default: {

@@ -13,6 +13,7 @@ import { CreateBatchedSwapOrderDto, CreateSwapOrderDto, QuerySwapOrderDto, SwapO
 import { CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, CreateTransferOrderDto, QueryTransferOrderDto, TransferOrderResponseDto } from "./dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderResponseDto } from "./dtos/withdrawal-order.dto";
 import { BaseOrderWithTagResponseDto, QueryBaseOrderDto } from "./dtos/base-order.dto";
+import { PairService } from "../pair/pair.service";
 
 @ApiTags('Order')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
@@ -30,9 +31,10 @@ export class OrderController {
         @InjectRepository(Wallet)
         walletRepo: Repository<Wallet>,
         tokenService: TokenService,
+        pairService: PairService,
     ) {
         const walletService = new WalletServiceFactory(walletRepo).getWalletService("berachain");
-        this.factory = new OrderServiceFactory(transferRepo, withdrawalRepo, swapRepo, tokenService, walletService);
+        this.factory = new OrderServiceFactory(transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
     }
 
     @Post('/swap')

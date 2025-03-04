@@ -1,10 +1,8 @@
 import { BaseEntity } from 'src/libs/base/base-entity';
-import { Column, Entity } from 'typeorm';
-import { PairDataDto } from './token-dto';
-import { TokenService } from './token.service';
-import { TypeormTransformers } from 'src/libs/utils/transformers';
+import { Column, Entity, Index } from 'typeorm';
 
 @Entity()
+@Index(['address', 'chain'], { unique: true })
 export class Token extends BaseEntity {
     @Column({ nullable: false })
     address: string;
@@ -20,9 +18,4 @@ export class Token extends BaseEntity {
 
     @Column({ nullable: false })
     decimals: number;
-
-    @Column({
-        nullable: true, type: 'text', transformer: TypeormTransformers.pairDataTransformer
-    })
-    pairData: PairDataDto[];
 }

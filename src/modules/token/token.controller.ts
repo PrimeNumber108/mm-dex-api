@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Put, Query } from "@nestjs/common";
 import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { TokenService } from "./token.service";
 import { CreateTokenDto, QueryTokenDto, TokenResponseDto, UpdateTokenDto } from "./token-dto";
@@ -18,7 +18,7 @@ export class TokenController {
         type: TokenResponseDto,
         description: 'Token'
     })
-    async importToken(params: CreateTokenDto): Promise<TokenResponseDto> {
+    async importToken(@Body() params: CreateTokenDto): Promise<TokenResponseDto> {
         return await this.tokenService.importToken(params)
     }
 
@@ -28,7 +28,7 @@ export class TokenController {
         type: TokenResponseDto,
         description: 'Updated Token'
     })
-    async updateToken(params: UpdateTokenDto): Promise<TokenResponseDto> {
+    async updateToken(@Body() params: UpdateTokenDto): Promise<TokenResponseDto> {
         return await this.tokenService.updateToken(params)
     }
 
@@ -38,7 +38,7 @@ export class TokenController {
         type: Boolean,
         description: 'Removed successfully'
     })
-    async removeToken(params: QueryTokenDto): Promise<boolean> {
+    async removeToken(@Body() params: QueryTokenDto): Promise<boolean> {
         return await this.tokenService.removeToken(params)
     }
 
