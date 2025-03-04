@@ -7,7 +7,7 @@ import { Column, Entity, Index } from 'typeorm';
 @Index(['cluster'])
 export class Wallet extends BaseEntity {
 
-  @Column({ nullable: false, type: 'number' })
+  @Column({ nullable: false, type: 'integer' })
   index: number;
 
   @Column({ nullable: false })

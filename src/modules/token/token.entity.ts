@@ -21,7 +21,7 @@ export class Token extends BaseEntity {
     decimals: number;
 
     @Column({
-        nullable: true, transformer: {
+        nullable: true, type: 'text', transformer: {
             to(value: PairDataDto[]) {
                 return TokenService.encodePairData(value)
             },

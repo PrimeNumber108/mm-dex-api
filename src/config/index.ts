@@ -10,16 +10,17 @@ const envVarsSchema = Joi.object()
       .valid('production', 'development', 'test', 'local', 'staging')
       .required(),
     PORT: Joi.number().default(3000),
-    WORKER_PORT: Joi.number().default(3001),
-
-    POSTGRES_URL: Joi.string().required(),
-
-    REDIS_URL: Joi.string().required(),
 
     BERA_RPC: Joi.string().required(),
 
     PASSPHRASE: Joi.string().required(),
-    JWT_SECRET: Joi.string().required(),
+
+    POSTGRES_USER: Joi.string().required(),
+    POSTGRES_PASSWORD: Joi.string().required(),
+    POSTGRES_HOST: Joi.string().required(),
+
+    REDIS_PASSWORD: Joi.string().required(),
+    REDIS_HOST: Joi.string().required(),
   })
   .unknown();
 
@@ -35,19 +36,17 @@ export const env = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   workerPort: envVars.WORKER_PORT,
-
   keys: {
     passphrase: envVars.PASSPHRASE,
-    jwtSecret: envVars.JWT_SECRET,
   },
-
   postgres: {
-    url: envVars.POSTGRES_URL,
-    testUrl: envVars.POSTGRES_URL + '_test',
-    testDbName: 'test',
+    username: envVars.POSTGRES_USER,
+    password: envVars.POSTGRES_PASSWORD,
+    host: envVars.POSTGRES_HOST,
   },
   redis: {
-    url: envVars.REDIS_URL,
+    host: envVars.REDIS_HOST,
+    password: envVars.REDIS_PASSWORD
   },
   web3: {
     beraRpc: envVars.BERA_RPC,

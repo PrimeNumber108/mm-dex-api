@@ -21,8 +21,10 @@ import { RolesGuard } from './user/guards/roles.guard';
     TypeOrmModule.forRoot(dataSource.options),
     RedisModule.forRoot({
       type: 'single',
-      url: env.redis.url,
-      options: {},
+      url: `redis://${env.redis.host}:6379`,
+      options: {
+        password: env.redis.password
+      },
     }),
     HealthCheckModule,
     UserModule,
@@ -39,7 +41,7 @@ import { RolesGuard } from './user/guards/roles.guard';
   ],
 })
 export class AppModule implements OnModuleInit {
-  constructor(@InjectRedis() private readonly redis: Redis) {}
+  constructor(@InjectRedis() private readonly redis: Redis) { }
 
-  async onModuleInit() {}
+  async onModuleInit() { }
 }
