@@ -75,7 +75,7 @@ export abstract class BaseWalletService implements IWalletService {
         }
 
         queryBuilder.orderBy("wallet.index", "ASC");
-
+        return await queryBuilder.getMany();
     }
     async assertKnownAccount(params: QueryWalletDto): Promise<string> {
         return (await this.assertWalletForExecution(params)).address;

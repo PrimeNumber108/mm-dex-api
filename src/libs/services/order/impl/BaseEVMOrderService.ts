@@ -2,8 +2,8 @@ import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransfer
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IWalletService } from "../../wallet/IWalletService";
 import { CreateBaseOrderDto } from "src/modules/order/dtos/base-order.dto";
-import { JsonRpcProvider, parseUnits, TransactionRequest, Wallet } from "ethers";
-import { NetworkConfigs } from "src/libs/consts";
+import { JsonRpcProvider, parseEther, parseUnits, TransactionRequest, Wallet } from "ethers";
+import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { BaseOrderService } from "./BaseOrderService";
 import { Repository } from "typeorm";
 import { TransferOrder } from "src/modules/order/entities/transfer-order.entity";
@@ -38,18 +38,28 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         return new Wallet(walletDto.privateKey, this.provider);
     }
 
-    async estimateERC20TransferGas(wallet: Wallet, token: string) {
+    async estimateTransferGas(wallet: Wallet, token: string) {
+        let tx: TransactionRequest;
+        if(token === NATIVE){
+            tx = {
+                from: wallet.address,
+                to: '0x267f2A39989dD184E010BF2Ac970df0297b686a7',
+                value: parseEther('0.000000000000001'),
+                chainId: NetworkConfigs[this.chain].chainId,
+            }
+        }else {
         const txData = ERC20__factory.createInterface().encodeFunctionData(
             "transfer",
             [token, BigInt(1)]
         );
-        const tx: TransactionRequest = {
+        tx = {
             from: wallet.address,
             to: token,
             data: txData,
             value: '0x0',
             chainId: NetworkConfigs[this.chain].chainId,
         }
+    }
         return await wallet.estimateGas(tx);
     }
     async fastTransferToken(
@@ -61,20 +71,36 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         gasLimit: bigint,
         gasPrice: bigint,
     ) {
-        const txData = ERC20__factory.createInterface().encodeFunctionData(
-            "transfer",
-            [recipient, amount]
-        );
-        const tx: TransactionRequest = {
-            from: wallet.address,
-            to: token,
-            data: txData,
-            value: '0x0',
-            chainId: NetworkConfigs[this.chain].chainId,
-            nonce,
-            gasLimit,
-            gasPrice,
-            type: 0
+        let tx: TransactionRequest;
+
+        if (token === NATIVE) {
+            tx = {
+                from: wallet.address,
+                to: recipient,
+                value: amount,
+                chainId: NetworkConfigs[this.chain].chainId,
+                nonce,
+                gasLimit,
+                gasPrice,
+                type: 0
+            }
+        }
+        else {
+            const txData = ERC20__factory.createInterface().encodeFunctionData(
+                "transfer",
+                [recipient, amount]
+            );
+            tx = {
+                from: wallet.address,
+                to: token,
+                data: txData,
+                value: '0x0',
+                chainId: NetworkConfigs[this.chain].chainId,
+                nonce,
+                gasLimit,
+                gasPrice,
+                type: 0
+            }
         }
 
         const signedTx = await wallet.signTransaction(tx);
@@ -102,6 +128,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
 
             return await this.transferRepo.save(record);
         } catch (err) {
+            console.log(err);
             throw new BadRequestException(`Failed to execute order: ${(err as Error).message}`)
         }
     }
@@ -110,7 +137,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const recipients = await this.walletService.assertKnownAccounts(params.recipients);
         const wallet = await this.getSrcWallet(params);
         let curNonce = await wallet.getNonce();
-        const gasLimit = await this.estimateERC20TransferGas(wallet, params.token);
+        const gasLimit = await this.estimateTransferGas(wallet, params.token);
         const feeData = await this.provider.getFeeData();
         const gasPrice = feeData.gasPrice;
         for (let i = 0; i < params.amounts.length; i++) {
@@ -136,14 +163,15 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                     txHash: hash
                 }
 
+                console.log(transferCreationDto)
                 creationDtos.push(transferCreationDto);
             } catch (err) {
                 console.log(err);
+                curNonce = curNonce - 1;
             }
-
-            const records = this.transferRepo.create(creationDtos);
-            return await this.transferRepo.save(records);
         }
+        const records = this.transferRepo.create(creationDtos);
+        return await this.transferRepo.save(records);
     }
     async transferInBatchMultiSenders(params: CreateBatchedTransferMultiSendersDto): Promise<TransferOrderResponseDto[]> {
         const walletDtos = await this.walletService.assertWalletsForExecution(params.senders);

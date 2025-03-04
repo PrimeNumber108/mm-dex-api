@@ -14,6 +14,7 @@ import { CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, CreateT
 import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderResponseDto } from "./dtos/withdrawal-order.dto";
 import { BaseOrderWithTagResponseDto, QueryBaseOrderDto } from "./dtos/base-order.dto";
 import { PairService } from "../pair/pair.service";
+import { FillUsername } from "src/decorators/fill-username.decorator";
 
 @ApiTags('Order')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
@@ -38,6 +39,7 @@ export class OrderController {
     }
 
     @Post('/swap')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: SwapOrderResponseDto,
@@ -49,6 +51,7 @@ export class OrderController {
     }
 
     @Post('/batch-swap')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: [SwapOrderResponseDto],
@@ -60,6 +63,7 @@ export class OrderController {
     }
 
     @Post('/transfer')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: TransferOrderResponseDto,
@@ -71,6 +75,7 @@ export class OrderController {
     }
 
     @Post('/withdraw')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: WithdrawalOrderResponseDto,
@@ -82,6 +87,7 @@ export class OrderController {
     }
 
     @Post('/batch-transfer')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: [TransferOrderResponseDto],
@@ -93,6 +99,7 @@ export class OrderController {
     }
 
     @Post('/transfer-multi-senders')
+    @FillUsername()
     @ApiResponse({
         status: 201,
         type: [TransferOrderResponseDto],
