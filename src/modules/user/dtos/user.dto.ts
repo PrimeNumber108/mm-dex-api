@@ -6,11 +6,9 @@ export class UserDto extends BaseResponse{
     @ApiResponseProperty({ type: String })
     username: string;
 
+    @ApiResponseProperty({ type: String })
     apiSecret: string;
 
     @ApiResponseProperty({ enum: UserRole })
     role: UserRole;
 }
-
-export class UserResponseDto extends OmitType(UserDto, ['apiSecret']) {}
-export class UserPublicDto extends UserResponseDto {}

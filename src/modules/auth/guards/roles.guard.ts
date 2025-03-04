@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
 import { UserRole } from '../../user/user.entity';
 import { UserService } from 'src/modules/user/user.service';
+import * as bcrypt from 'bcrypt'; // Import bcrypt for hashing & verification
 
 @Injectable()
 export class RolesGuard {
@@ -29,7 +30,12 @@ export class RolesGuard {
     // 🔹 Find user by API secret
     const user = await this.userSerive.findUser(username);
 
-    if (!user || user.apiSecret !== apiSecret) {
+    if (!user?.apiSecretHash) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isSecretValid = await bcrypt.compare(apiSecret, user.apiSecretHash);
+    if (!isSecretValid) {
       throw new UnauthorizedException('Invalid API secret');
     }
 
@@ -38,6 +44,7 @@ export class RolesGuard {
     }
     if(user.role === UserRole.ADMIN) return true;
 
+    if(!requiredRoles) return true;
     // 🔹 Check if user has required role
     const hasRole = requiredRoles.includes(user.role);
     if (!hasRole) {

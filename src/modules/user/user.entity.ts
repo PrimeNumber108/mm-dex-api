@@ -12,8 +12,8 @@ export class User extends BaseEntity {
     @Column({ nullable: false })
     username: string;
 
-    @Column({ nullable: false, transformer: TypeormTransformers.encryptionTransformer })
-    apiSecret: string;
+    @Column({ nullable: false })
+    apiSecretHash: string;
 
     @Column({ nullable: false, enum: UserRole })
     role: UserRole;
