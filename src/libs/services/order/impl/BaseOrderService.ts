@@ -25,10 +25,10 @@ export abstract class BaseOrderService implements IOrderService {
 
     timeRangeQuery(queryBuilder: SelectQueryBuilder<BaseOrder>, fromTs?: number, toTs?: number){
         if(fromTs){
-            queryBuilder.where("order.created_at >= :fromTs", {fromTs});
+            queryBuilder.andWhere("order.executionTime >= :fromTs", {fromTs});
         }
         if(toTs){
-            queryBuilder.where("order.created_at < :toTs", {toTs});
+            queryBuilder.andWhere("order.executionTime < :toTs", {toTs});
         }
     }
     async poll(params: PollOrderDto): Promise<BaseOrderWithTagResponseDto[]> {

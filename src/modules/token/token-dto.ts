@@ -108,3 +108,24 @@ export class UpdateTokenDto {
     @Type(() => CreatePairDataDto)
     pairData?: CreatePairDataDto[];
 }
+
+export function encodePairData(pairData: PairDataDto[]) {
+    const json = {};
+    for (const item of pairData) {
+        const { protocol, ...rest } = item;
+        json[protocol] = { ...rest };
+    }
+    return JSON.stringify(json);
+}
+
+export function decodePairData(encoded: string) {
+    const json = JSON.parse(encoded);
+    const pairData: PairDataDto[] = [];
+    for (const [protocol, data] of Object.entries(json)) {
+        pairData.push({
+            protocol,
+            ...(data as any)
+        })
+    }
+    return pairData
+}

@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/libs/base/base-entity';
 import { Column, Entity } from 'typeorm';
 import { PairDataDto } from './token-dto';
 import { TokenService } from './token.service';
+import { TypeormTransformers } from 'src/libs/utils/transformers';
 
 @Entity()
 export class Token extends BaseEntity {
@@ -21,14 +22,7 @@ export class Token extends BaseEntity {
     decimals: number;
 
     @Column({
-        nullable: true, type: 'text', transformer: {
-            to(value: PairDataDto[]) {
-                return TokenService.encodePairData(value)
-            },
-            from(value: string) {
-                return TokenService.decodePairData(value)
-            }
-        }
+        nullable: true, type: 'text', transformer: TypeormTransformers.pairDataTransformer
     })
     pairData: PairDataDto[];
 }

@@ -5,28 +5,23 @@ import {
   UpdateDateColumn,
   ValueTransformer,
 } from 'typeorm';
-
-// Transformer to convert between Date and Unix timestamp (seconds)
-const timestampTransformer: ValueTransformer = {
-  to: (value: Date) => Math.floor(value.getTime() / 1000), // Convert Date to seconds
-  from: (value: number) => new Date(value * 1000), // Convert seconds to Date
-};
+import { TypeormTransformers } from '../utils/transformers';
 
 export class BaseEntity extends BaseEntityClass {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @CreateDateColumn({ type: 'int', transformer: timestampTransformer })
-  created_at: number;
+  @CreateDateColumn()
+  created_at: Date;
 
-  @UpdateDateColumn({ type: 'int', transformer: timestampTransformer })
-  updated_at: number;
+  @UpdateDateColumn()
+  updated_at: Date;
 }
 
 export class BaseEntityWithoutId extends BaseEntityClass {
-  @CreateDateColumn({ type: 'int', transformer: timestampTransformer })
-  created_at: number;
+  @UpdateDateColumn()
+  created_at: Date;
 
-  @UpdateDateColumn({ type: 'int', transformer: timestampTransformer })
-  updated_at: number;
+  @UpdateDateColumn()
+  updated_at: Date;
 }

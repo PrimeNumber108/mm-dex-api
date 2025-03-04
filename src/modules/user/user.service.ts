@@ -17,18 +17,18 @@ export class UserService implements OnModuleInit {
 
     }
     async onModuleInit() {
-        // const rootAdmin = await this.findUser('root-admin');
-        // if(!rootAdmin){
-        //     const record = this.userRepo.create({
-        //         username: 'root-admin',
-        //         role: UserRole.ADMIN,
-        //         apiSecret: env.keys.rootAdminApiSecret
-        //     });
-        //     await this.userRepo.save(record);
-        //     this.logger.log("Created root admin successfully!");
-        //     return;
-        // }
-        // this.logger.log("Root admin already exists!");
+        const rootAdmin = await this.findUser('root-admin');
+        if(!rootAdmin){
+            const record = this.userRepo.create({
+                username: 'root-admin',
+                role: UserRole.ADMIN,
+                apiSecret: env.keys.rootAdminApiSecret
+            });
+            await this.userRepo.save(record);
+            this.logger.log("Created root admin successfully!");
+            return;
+        }
+        this.logger.log("Root admin already exists!");
     }
 
     async findUser(username: string): Promise<UserDto> {

@@ -43,6 +43,9 @@ export class BaseOrderResponseDto extends BaseResponse {
     @ApiResponseProperty({ type: String })
     account: string;
 
+    @ApiResponseProperty({ type: Number })
+    executionTime: number;
+
     @ApiResponseProperty({ type: String })
     txHash: string;
 }

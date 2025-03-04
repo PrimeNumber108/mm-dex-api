@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/libs/base/base-entity';
-import { Column, ColumnOptions, Index } from 'typeorm';
+import { getTimestampInSeconds } from 'src/libs/utils/timeHelper';
+import { BeforeInsert, Column, ColumnOptions, Index } from 'typeorm';
 
 @Index(['username'])
 @Index(['account', 'chain'])
@@ -15,6 +16,14 @@ export abstract class BaseOrder extends BaseEntity {
 
   @Column({ nullable: false })
   txHash: string;
+
+  @Column({ nullable: false, type: 'integer' })
+  executionTime: number;
+
+  @BeforeInsert()
+  protected setExecutionTime() {
+    this.executionTime = getTimestampInSeconds();
+  }
 }
 
 export const floatOptions: ColumnOptions = {

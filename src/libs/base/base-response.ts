@@ -4,19 +4,19 @@ export class BaseResponse {
   @ApiResponseProperty({ type: Number })
   id: number;
 
-  @ApiResponseProperty({ type: Number })
-  created_at: number;
+  @ApiResponseProperty({ type: Date })
+  created_at: Date;
 
-  @ApiResponseProperty({ type: Number })
-  updated_at: number;
+  @ApiResponseProperty({ type: Date })
+  updated_at: Date;
 }
 
 export class BaseResponseWithoutId {
-  @ApiResponseProperty({ type: Number })
-  created_at: number;
+  @ApiResponseProperty({ type: Date })
+  created_at: Date;
 
-  @ApiResponseProperty({ type: Number })
-  updated_at: number;
+  @ApiResponseProperty({ type: Date })
+  updated_at: Date;
 }
 
 export class BasePaginationResponse {
