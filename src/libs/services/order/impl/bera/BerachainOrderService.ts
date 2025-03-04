@@ -27,7 +27,9 @@ export class BerachainOrderService extends BaseEVMOrderService {
     async executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
         const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
         const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
-
+        const recipient = await this.walletService.assertKnownAccount({
+            address: params.recipient
+        })
         const wallet = await this.getSrcWallet(params);
         let txHash: string;
         switch (params.protocol) {
@@ -38,7 +40,7 @@ export class BerachainOrderService extends BaseEVMOrderService {
                     params.tokenOut,
                     parseUnits(params.amountIn, tokenIn.decimals),
                     parseUnits(params.amountOutMin, tokenOut.decimals),
-                    params.recipient
+                    recipient
                 );
                 break;
             }
@@ -58,7 +60,7 @@ export class BerachainOrderService extends BaseEVMOrderService {
                     BigInt(pair.fee),
                     parseUnits(params.amountIn, tokenIn.decimals),
                     parseUnits(params.amountOutMin, tokenOut.decimals),
-                    params.recipient
+                    recipient
                 );
                 break;
             }
