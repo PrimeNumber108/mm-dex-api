@@ -1,5 +1,5 @@
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "src/modules/wallet/dtos/query-wallet.dto";
-import { GenerateClusterDto, ImportClusterDto, ImportWalletDto, GenerateWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
+import { GenerateClusterDto, ImportClusterDto, ImportWalletDto, GenerateWalletDto, RenameClusterDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto, WalletResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { IWalletService } from "../IWalletService";
 import { Repository } from "typeorm";
@@ -11,6 +11,21 @@ export abstract class BaseWalletService implements IWalletService {
         readonly chain: string,
         protected readonly walletRepo: Repository<Wallet>
     ) { }
+    async renameCluster(params: RenameClusterDto): Promise<boolean> {
+        return (await this.walletRepo.update({
+            cluster: params.cluster
+        }, {
+            cluster: params.newName
+        })).affected > 0;
+    }
+
+    async listAllClusters(): Promise<string[]> {
+        const clusters = await this.walletRepo.createQueryBuilder("wallet")
+            .select("DISTINCT wallet.cluster", "cluster")
+            .getRawMany();
+
+        return clusters.map(c => c.cluster);
+    }
 
     static hidePrivateInfo(wallet: Wallet): WalletResponseDto {
         const {

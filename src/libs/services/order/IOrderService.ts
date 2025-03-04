@@ -1,3 +1,4 @@
+import { BaseOrderWithTagResponseDto, PollOrderDto } from "src/modules/order/dtos/base-order.dto";
 import { CreateSwapOrderDto, QuerySwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, CreateTransferOrderDto, QueryTransferOrderDto, TransferOrderResponseDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
@@ -40,4 +41,8 @@ export interface IOrderService {
     recordWithdrawals(
         params: CreateWithdrawalOrderDto[]
     ): Promise<WithdrawalOrderResponseDto[]>;
+
+    poll(
+        params: PollOrderDto
+    ): Promise<BaseOrderWithTagResponseDto[]>;
 }

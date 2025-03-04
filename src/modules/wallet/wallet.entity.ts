@@ -4,7 +4,7 @@ import { Column, Entity, Index } from 'typeorm';
 
 @Entity()
 @Index(['address'], { unique: true })
-@Index(['cluster'], { unique: true })
+@Index(['cluster'])
 export class Wallet extends BaseEntity {
 
   @Column({ nullable: false, type: 'number' })

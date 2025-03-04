@@ -7,22 +7,23 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CryptoHelper } from 'src/libs/utils/crypto-helper';
 
 // Interceptor to modify the request body
 @Injectable()
-export class DecodeBodyInterceptor implements NestInterceptor {
+export class FillUsernameInterceptor implements NestInterceptor {
     constructor() { }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
 
-        request.body = JSON.parse(CryptoHelper.decrypt(request.body));
+        const username = request.headers['username'];
+
+        request.body['username'] = username;
 
         return next.handle().pipe(map((data) => data));
     }
 }
 
-export function DecodeBody() {
-    return UseInterceptors(new DecodeBodyInterceptor());
+export function FillUsername() {
+    return UseInterceptors(new FillUsernameInterceptor());
 }

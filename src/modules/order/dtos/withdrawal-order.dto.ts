@@ -40,8 +40,3 @@ export class WithdrawalOrderResponseDto extends BaseOrderResponseDto {
     @ApiResponseProperty({ type: String })
     amount: string;
 }
-
-
-export class WithdrawalOrderRequestDto extends OmitType(CreateWithdrawalOrderDto, 
-    ['chain', 'username', 'txHash']
-) {}

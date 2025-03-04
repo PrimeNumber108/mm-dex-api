@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, ApiResponseProperty, OmitType } from "@nestjs/swagger";
 import { BaseOrderResponseDto, CreateBaseOrderDto, QueryBaseOrderDto } from "./base-order.dto";
-import { IsNumberString } from "class-validator";
+import { ArrayMinSize, IsArray, IsNumberString } from "class-validator";
 import { Type } from "class-transformer";
 
 export class QuerySwapOrderDto extends QueryBaseOrderDto {
@@ -15,14 +15,6 @@ export class QuerySwapOrderDto extends QueryBaseOrderDto {
 
     @ApiPropertyOptional({ type: String })
     protocol?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountInMin?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountInMax?: string;
 }
 
 export class CreateSwapOrderDto extends CreateBaseOrderDto {
@@ -47,16 +39,12 @@ export class CreateSwapOrderDto extends CreateBaseOrderDto {
     amountOutMin: string;
 }
 
-export class SwapOrderRequestDto extends OmitType(CreateBaseOrderDto, [
-    'chain',
-    'username',
-    'txHash'
-]) {}
-
-export class BatchedSwapOrderRequestDto {
-    @ApiProperty({ type: [SwapOrderRequestDto]})
-    @Type(() => SwapOrderRequestDto)
-    orders: SwapOrderRequestDto[];
+export class CreateBatchedSwapOrderDto {
+    @ApiProperty({ type: [CreateSwapOrderDto] })
+    @Type(() => CreateSwapOrderDto)
+    @IsArray()
+    @ArrayMinSize(1)
+    orders: CreateSwapOrderDto[]
 }
 
 export class SwapOrderResponseDto extends BaseOrderResponseDto {

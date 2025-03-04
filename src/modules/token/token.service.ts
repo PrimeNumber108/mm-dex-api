@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Token } from "./token.entity";
 import { Repository } from "typeorm";
-import { CreateTokenDto, PairDataDto, QueryTokenDto, TokenResponseDto } from "./token-dto";
+import { CreateTokenDto, PairDataDto, QueryTokenDto, TokenResponseDto, UpdateTokenDto } from "./token-dto";
 
 @Injectable()
 export class TokenService {
@@ -40,6 +40,22 @@ export class TokenService {
         return await this.tokenRepo.save(record)
     }
 
+    async updateToken(
+        params: UpdateTokenDto
+    ): Promise<TokenResponseDto> {
+        const {address, chain, ...update} = params
+        let existing = await this.assertKnownToken({
+            address,
+            chain
+        });
+        existing = {
+            ...existing,
+            ...update
+        }
+
+        return this.tokenRepo.save(existing);
+    }
+
     async assertKnownToken(params: QueryTokenDto): Promise<TokenResponseDto> {
         const token = await this.getToken(params);
         if (!token) throw new NotFoundException('Token not found!');
@@ -52,5 +68,11 @@ export class TokenService {
     ): Promise<TokenResponseDto> {
         const token = await this.tokenRepo.findOneBy(params);
         return token;
+    }
+
+    async removeToken(
+        params: QueryTokenDto
+    ): Promise<boolean>{
+        return (await this.tokenRepo.delete(params)).affected > 0;
     }
 }

@@ -1,19 +1,35 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ArrayMinSize, IsArray, IsInt, IsNotEmpty, IsString, Min } from "class-validator";
 
+export class EncryptedDto {
+    @ApiProperty({ type: String })
+    @IsNotEmpty()
+    @IsString()
+    payload: string;
+}
+
 export class ImportWalletDto {
-    @ApiProperty({type: String})
+    @ApiProperty({ type: String })
     @IsNotEmpty()
     @IsString()
     privateKey: string;
 
-    @ApiPropertyOptional({type: String})
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    chain: string;
+
+    @ApiPropertyOptional({ type: String })
     cluster?: string;
 }
 
 export class GenerateWalletDto {
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    chain: string;
 
-    @ApiPropertyOptional({type: String})
+    @ApiPropertyOptional({ type: String })
     cluster?: string;
 }
 
@@ -28,14 +44,24 @@ export class ImportClusterDto {
     @ApiProperty({ type: String }) // Made required
     @IsNotEmpty()
     @IsString()
+    chain: string;
+
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
     cluster: string;
 }
 
 export class GenerateClusterDto {
-    @ApiProperty({type: Number})
+    @ApiProperty({ type: Number })
     @IsInt()
     @Min(1)
     numOfKeys: number;
+
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    chain: string;
 
     @ApiProperty({ type: String }) // Made required
     @IsNotEmpty()
@@ -44,9 +70,7 @@ export class GenerateClusterDto {
 }
 
 export class UpdateWalletDto {
-    @ApiPropertyOptional({type: String})
-    chain?: string;
-    @ApiPropertyOptional({type: String})
+    @ApiPropertyOptional({ type: String })
     cluster?: string;
 }
 

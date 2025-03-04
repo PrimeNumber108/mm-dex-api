@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from "@nestjs/s
 import { BaseResponse } from "src/libs/base/base-response";
 
 export class CreateBaseOrderDto {
-    @ApiProperty({ type: String })
     username: string;
 
     @ApiProperty({ type: String })
@@ -26,6 +25,12 @@ export class QueryBaseOrderDto {
 
     @ApiPropertyOptional({ type: String })
     txHash?: string;
+
+    @ApiPropertyOptional({ type: Number })
+    fromTs?: number;
+
+    @ApiPropertyOptional({ type: Number })
+    toTs?: number;
 }
 
 export class BaseOrderResponseDto extends BaseResponse {
@@ -40,4 +45,14 @@ export class BaseOrderResponseDto extends BaseResponse {
 
     @ApiResponseProperty({ type: String })
     txHash: string;
+}
+
+export class BaseOrderWithTagResponseDto extends BaseOrderResponseDto {
+    @ApiResponseProperty({ type: String })
+    tag: string;
+}
+
+export class PollOrderDto extends QueryBaseOrderDto {
+    @ApiPropertyOptional({ type: String })
+    tag?: string;
 }

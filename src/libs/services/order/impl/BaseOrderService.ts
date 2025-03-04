@@ -2,13 +2,14 @@ import { CreateSwapOrderDto, SwapOrderResponseDto, QuerySwapOrderDto } from "src
 import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, QueryTransferOrderDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto, QueryWithdrawalOrderDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IOrderService } from "../IOrderService";
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { TransferOrder } from "src/modules/order/entities/transfer-order.entity";
 import { WithdrawalOrder } from "src/modules/order/entities/withdrawal-order.entity";
 import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
-import { TokenService } from "src/modules/token/TokenService";
-import { QueryWalletDto } from "src/modules/wallet/dtos/query-wallet.dto";
+import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "../../wallet/IWalletService";
+import { PollOrderDto, BaseOrderWithTagResponseDto, BaseOrderResponseDto } from "src/modules/order/dtos/base-order.dto";
+import { BaseOrder } from "src/modules/order/entities/base-order.entity";
 
 export abstract class BaseOrderService implements IOrderService {
     constructor(
@@ -20,6 +21,40 @@ export abstract class BaseOrderService implements IOrderService {
         protected readonly walletService: IWalletService
     ){
 
+    }
+
+    timeRangeQuery(queryBuilder: SelectQueryBuilder<BaseOrder>, fromTs?: number, toTs?: number){
+        if(fromTs){
+            queryBuilder.where("order.created_at >= :fromTs", {fromTs});
+        }
+        if(toTs){
+            queryBuilder.where("order.created_at < :toTs", {toTs});
+        }
+    }
+    async poll(params: PollOrderDto): Promise<BaseOrderWithTagResponseDto[]> {
+        const {
+            tag, ...baseQuery
+        } = params;
+
+        let transfers: BaseOrderWithTagResponseDto[] = [];
+        let withdrawals: BaseOrderWithTagResponseDto[] = [];
+        let swaps: BaseOrderWithTagResponseDto[] = [];
+
+        if(!tag || tag === 'transfer'){
+            transfers = (await this.queryTransfers(baseQuery)).map(order => ({...order, tag: 'transfer'}));
+        }
+        if(!tag || tag === 'withdrawal'){
+            withdrawals = (await this.queryWithdrawals(baseQuery)).map(order => ({...order, tag: 'withdraw'}));
+        }
+        if(!tag || tag === 'swap'){
+            swaps = (await this.querySwaps(baseQuery)).map(order => ({...order, tag: 'swap'}));
+        }
+
+        return [
+            ...transfers,
+            ...withdrawals,
+            ...swaps
+        ]
     }
 
     executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
@@ -41,13 +76,37 @@ export abstract class BaseOrderService implements IOrderService {
         throw new Error("Method not implemented.");
     }
     async queryTransfers(params: QueryTransferOrderDto): Promise<TransferOrderResponseDto[]> {
-        throw new Error("Method not implemented.");
+        const {
+            fromTs,
+            toTs,
+            ...rest
+        } = params;
+        const queryBuilder = this.transferRepo.createQueryBuilder("order");
+        queryBuilder.where(rest);
+        this.timeRangeQuery(queryBuilder);
+        return await queryBuilder.getMany();
     }
     async queryWithdrawals(params: QueryWithdrawalOrderDto): Promise<WithdrawalOrderResponseDto[]> {
-        throw new Error("Method not implemented.");
+        const {
+            fromTs,
+            toTs,
+            ...rest
+        } = params;
+        const queryBuilder = this.withdrawalRepo.createQueryBuilder("order");
+        queryBuilder.where(rest);
+        this.timeRangeQuery(queryBuilder);
+        return await queryBuilder.getMany();
     }
     async querySwaps(params: QuerySwapOrderDto): Promise<SwapOrderResponseDto[]> {
-        throw new Error("Method not implemented.");
+        const {
+            fromTs,
+            toTs,
+            ...rest
+        } = params;
+        const queryBuilder = this.swapRepo.createQueryBuilder("order");
+        queryBuilder.where(rest);
+        this.timeRangeQuery(queryBuilder);
+        return await queryBuilder.getMany();
     }
     async recordTransfers(params: CreateTransferOrderDto[]): Promise<TransferOrderResponseDto[]> {
         const records = this.transferRepo.create(params);

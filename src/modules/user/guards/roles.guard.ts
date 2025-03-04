@@ -3,15 +3,18 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
 import { UserRole, User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthGuard } from '@nestjs/passport';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class RolesGuard extends AuthGuard('') {
   constructor(
     private reflector: Reflector,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) {
+    super()
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
@@ -36,11 +39,11 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('Invalid API secret');
     }
 
-    if (!user.role) {
+    if (!user?.role) {
       throw new ForbiddenException('User role not found');
     }
     if(user.role === UserRole.ADMIN) return true;
-    
+
     // 🔹 Check if user has required role
     const hasRole = requiredRoles.includes(user.role);
     if (!hasRole) {

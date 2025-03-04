@@ -3,7 +3,7 @@ import { BaseEVMOrderService } from "../BaseEVMOrderService";
 import { TransferOrder } from "src/modules/order/entities/transfer-order.entity";
 import { WithdrawalOrder } from "src/modules/order/entities/withdrawal-order.entity";
 import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
-import { TokenService } from "src/modules/token/TokenService";
+import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "src/libs/services/wallet/IWalletService";
 import { CreateSwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { NotFoundException } from "@nestjs/common";

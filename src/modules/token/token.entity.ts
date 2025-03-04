@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/libs/base/base-entity';
 import { Column, Entity } from 'typeorm';
 import { PairDataDto } from './token-dto';
-import { TokenService } from './TokenService';
+import { TokenService } from './token.service';
 
 @Entity()
 export class Token extends BaseEntity {

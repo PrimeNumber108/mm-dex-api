@@ -10,14 +10,6 @@ export class QueryTransferOrderDto extends QueryBaseOrderDto {
 
     @ApiPropertyOptional({ type: String })
     recipient?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountMin?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountMax?: string;
 }
 
 export class CreateTransferOrderDto extends CreateBaseOrderDto {
@@ -43,10 +35,6 @@ export class TransferOrderResponseDto extends BaseOrderResponseDto {
     amount: string;
 }
 
-export class TransferOrderRequestDto extends OmitType(CreateTransferOrderDto,
-    ['chain', 'username', 'txHash']
-) { }
-
 export class CreateBatchedTransferDto extends CreateBaseOrderDto {
     @ApiProperty({ type: String })
     token: string;
@@ -58,12 +46,6 @@ export class CreateBatchedTransferDto extends CreateBaseOrderDto {
     @ApiProperty({ type: [String] })
     amounts: string[];
 }
-
-export class BatchedTransferRequestDto extends OmitType(CreateBatchedTransferDto, [
-    'chain',
-    'username',
-    'txHash'
-]) { }
 
 export class CreateBatchedTransferMultiSendersDto extends CreateBaseOrderDto {
     @ApiProperty({ type: QueryWalletsDto })
@@ -79,9 +61,3 @@ export class CreateBatchedTransferMultiSendersDto extends CreateBaseOrderDto {
     @ApiProperty({ type: [String] })
     amounts: string[];
 }
-
-export class BatchedTransferMultiSendersRequestDto extends OmitType(CreateBatchedTransferMultiSendersDto, [
-    'chain',
-    'username',
-    'txHash'
-]) { }

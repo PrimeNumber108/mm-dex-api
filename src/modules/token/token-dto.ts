@@ -87,3 +87,24 @@ export class CreateTokenDto {
     @Type(() => CreatePairDataDto)
     pairData: CreatePairDataDto[];
 }
+
+export class UpdateTokenDto {
+    @ApiProperty({ type: String })
+    address: string;
+
+    @ApiProperty({ type: String })
+    chain: string;
+
+    @ApiPropertyOptional({ type: String })
+    name?: string;
+
+    @ApiPropertyOptional({ type: String })
+    symbol?: string;
+
+    @ApiPropertyOptional({ type: Number })
+    decimals?: number;
+
+    @ApiPropertyOptional({ type: [CreatePairDataDto] })
+    @Type(() => CreatePairDataDto)
+    pairData?: CreatePairDataDto[];
+}

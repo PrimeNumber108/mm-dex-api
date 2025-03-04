@@ -7,6 +7,12 @@ import { env } from 'src/config';
 import { HealthCheckModule } from './health-check/health-check.module';
 import dataSource from 'src/libs/typeorm.config';
 import Redis from 'ioredis';
+import { UserModule } from './user/user.module';
+import { TokenModule } from './token/token.module';
+import { WalletModule } from './wallet/wallet.module';
+import { OrderModule } from './order/order.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './user/guards/roles.guard';
 
 @Module({
   imports: [
@@ -19,6 +25,17 @@ import Redis from 'ioredis';
       options: {},
     }),
     HealthCheckModule,
+    UserModule,
+    TokenModule,
+    WalletModule,
+    OrderModule,
+  ],
+
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule implements OnModuleInit {
