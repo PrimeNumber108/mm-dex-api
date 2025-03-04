@@ -12,7 +12,8 @@ import { TokenModule } from './token/token.module';
 import { WalletModule } from './wallet/wallet.module';
 import { OrderModule } from './order/order.module';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './user/guards/roles.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RolesGuard } from './user/guards/roles.guard';
     }),
     HealthCheckModule,
     UserModule,
+    AuthModule,
     TokenModule,
     WalletModule,
     OrderModule,

@@ -1,18 +1,34 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "./user.entity";
+import { User, UserRole } from "./user.entity";
 import { UserDto, UserPublicDto } from "./dtos/user.dto";
 import { CreateUserDto, RemoveUserDto, RotateApiKeyDto, UpdateUserDto } from "./dtos/upsert-user.dto";
 import { randomBytes } from "crypto";
+import { env } from "src/config";
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
+    private readonly logger = new Logger(UserService.name);
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>
     ) {
 
+    }
+    async onModuleInit() {
+        // const rootAdmin = await this.findUser('root-admin');
+        // if(!rootAdmin){
+        //     const record = this.userRepo.create({
+        //         username: 'root-admin',
+        //         role: UserRole.ADMIN,
+        //         apiSecret: env.keys.rootAdminApiSecret
+        //     });
+        //     await this.userRepo.save(record);
+        //     this.logger.log("Created root admin successfully!");
+        //     return;
+        // }
+        // this.logger.log("Root admin already exists!");
     }
 
     async findUser(username: string): Promise<UserDto> {

@@ -21,8 +21,8 @@ const setMiddleware = (app: NestExpressApplication) => {
       'Authorization',
       'Content-Type',
       'X-Requested-With',
-      'Wallet-Address',
-      'wallet-address',
+      'x-api-secret',
+      'username'
     ],
   });
 
@@ -52,8 +52,10 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('A8 Pump Fun API')
-      .setVersion('0.0.12')
+      .setTitle('MM Executor API')
+      .setVersion('0.0.1')
+      .addApiKey({ type: 'apiKey', name: 'x-api-secret', in: 'header' }, 'x-api-secret')
+      .addApiKey({ type: 'apiKey', name: 'username', in: 'header' }, 'username')
       .build();
 
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);

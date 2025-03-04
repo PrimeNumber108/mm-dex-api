@@ -1,19 +1,15 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
-import { UserRole, User } from '../user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AuthGuard } from '@nestjs/passport';
-import { Repository } from 'typeorm';
+import { UserRole } from '../../user/user.entity';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
-export class RolesGuard extends AuthGuard('') {
+export class RolesGuard {
   constructor(
     private reflector: Reflector,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userSerive: UserService
   ) {
-    super()
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,21 +17,19 @@ export class RolesGuard extends AuthGuard('') {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles) {
-      return true;
-    }
 
     const request = context.switchToHttp().getRequest();
     const apiSecret = request.headers['x-api-secret'];
+    const username = request.headers['username'];
 
-    if (!apiSecret) {
-      throw new UnauthorizedException('API secret is required');
+    if (!apiSecret || !username) {
+      throw new UnauthorizedException('API secret & username are required');
     }
 
     // 🔹 Find user by API secret
-    const user = await this.userRepository.findOne({ where: { apiSecret } });
+    const user = await this.userSerive.findUser(username);
 
-    if (!user) {
+    if (!user || user.apiSecret !== apiSecret) {
       throw new UnauthorizedException('Invalid API secret');
     }
 

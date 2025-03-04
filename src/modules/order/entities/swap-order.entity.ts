@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { BaseOrder, floatOptions } from './base-order.entity';
+import { BaseOrder, floatOptions } from './base-order';
 
 @Entity()
 export class SwapOrder extends BaseOrder {

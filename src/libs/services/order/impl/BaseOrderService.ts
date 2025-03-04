@@ -9,7 +9,7 @@ import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
 import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "../../wallet/IWalletService";
 import { PollOrderDto, BaseOrderWithTagResponseDto, BaseOrderResponseDto } from "src/modules/order/dtos/base-order.dto";
-import { BaseOrder } from "src/modules/order/entities/base-order.entity";
+import { BaseOrder } from "src/modules/order/entities/base-order";
 
 export abstract class BaseOrderService implements IOrderService {
     constructor(

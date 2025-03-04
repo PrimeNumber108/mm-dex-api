@@ -21,6 +21,8 @@ const envVarsSchema = Joi.object()
 
     REDIS_PASSWORD: Joi.string().required(),
     REDIS_HOST: Joi.string().required(),
+
+    ROOT_ADMIN_API_SECRET: Joi.string().required(),
   })
   .unknown();
 
@@ -38,6 +40,7 @@ export const env = {
   workerPort: envVars.WORKER_PORT,
   keys: {
     passphrase: envVars.PASSPHRASE,
+    rootAdminApiSecret: envVars.ROOT_ADMIN_API_SECRET,
   },
   postgres: {
     username: envVars.POSTGRES_USER,
