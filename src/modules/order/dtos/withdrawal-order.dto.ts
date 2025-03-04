@@ -8,14 +8,6 @@ export class QueryWithdrawalOrderDto extends QueryBaseOrderDto {
 
     @ApiPropertyOptional({ type: String })
     recipient?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountMin?: string;
-
-    @ApiPropertyOptional({ type: String })
-    @IsNumberString()
-    amountMax?: string;
 }
 
 export class CreateWithdrawalOrderDto extends CreateBaseOrderDto {

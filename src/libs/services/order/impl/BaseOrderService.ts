@@ -85,7 +85,7 @@ export abstract class BaseOrderService implements IOrderService {
         } = params;
         const queryBuilder = this.transferRepo.createQueryBuilder("order");
         queryBuilder.where(rest);
-        this.timeRangeQuery(queryBuilder);
+        this.timeRangeQuery(queryBuilder, params.fromTs, params.toTs);
         return await queryBuilder.getMany();
     }
     async queryWithdrawals(params: QueryWithdrawalOrderDto): Promise<WithdrawalOrderResponseDto[]> {
@@ -96,7 +96,7 @@ export abstract class BaseOrderService implements IOrderService {
         } = params;
         const queryBuilder = this.withdrawalRepo.createQueryBuilder("order");
         queryBuilder.where(rest);
-        this.timeRangeQuery(queryBuilder);
+        this.timeRangeQuery(queryBuilder, params.fromTs, params.toTs);
         return await queryBuilder.getMany();
     }
     async querySwaps(params: QuerySwapOrderDto): Promise<SwapOrderResponseDto[]> {
@@ -107,7 +107,7 @@ export abstract class BaseOrderService implements IOrderService {
         } = params;
         const queryBuilder = this.swapRepo.createQueryBuilder("order");
         queryBuilder.where(rest);
-        this.timeRangeQuery(queryBuilder);
+        this.timeRangeQuery(queryBuilder, params.fromTs, params.toTs);
         return await queryBuilder.getMany();
     }
     async recordTransfers(params: CreateTransferOrderDto[]): Promise<TransferOrderResponseDto[]> {
