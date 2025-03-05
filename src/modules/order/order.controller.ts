@@ -58,8 +58,8 @@ export class OrderController {
         description: 'Swap orders'
     })
     async executeSwapsInBatch(@Body() params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]> {
-        const service = this.factory.getOrderService(params.orders[0].chain);
-        return await service.executeSwapsInBatch(params.orders);
+        const service = this.factory.getOrderService(params.chain);
+        return await service.executeSwapsInBatch(params);
     }
 
     @Post('/transfer')

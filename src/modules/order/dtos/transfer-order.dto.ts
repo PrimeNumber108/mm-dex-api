@@ -47,7 +47,7 @@ export class CreateBatchedTransferDto extends CreateBaseOrderDto {
     amounts: string[];
 }
 
-export class CreateBatchedTransferMultiSendersDto extends CreateBaseOrderDto {
+export class CreateBatchedTransferMultiSendersDto extends OmitType(CreateBaseOrderDto, ['account']) {
     @ApiProperty({ type: QueryWalletsDto })
     @Type(() => QueryWalletsDto)
     senders: QueryWalletsDto;

@@ -39,12 +39,42 @@ export class CreateSwapOrderDto extends CreateBaseOrderDto {
     amountOutMin: string;
 }
 
+export class BatchedSwapElementDto {
+    @ApiProperty({ type: String })
+    account: string;
+
+    @ApiProperty({ type: String })
+    recipient: string;
+
+    @ApiProperty({ type: String })
+    @IsNumberString()
+    amountIn: string;
+
+    @ApiProperty({ type: String })
+    @IsNumberString()
+    amountOutMin: string;
+}
+
 export class CreateBatchedSwapOrderDto {
-    @ApiProperty({ type: [CreateSwapOrderDto] })
-    @Type(() => CreateSwapOrderDto)
+    username: string;
+
+    @ApiProperty({ type: String })
+    chain: string;
+
+    @ApiProperty({ type: String })
+    tokenIn: string;
+
+    @ApiProperty({ type: String })
+    tokenOut: string;
+
+    @ApiProperty({ type: String })
+    protocol: string;
+
+    @ApiProperty({ type: [BatchedSwapElementDto] })
+    @Type(() => BatchedSwapElementDto)
     @IsArray()
     @ArrayMinSize(1)
-    orders: CreateSwapOrderDto[]
+    items: BatchedSwapElementDto[]
 }
 
 export class SwapOrderResponseDto extends BaseOrderResponseDto {

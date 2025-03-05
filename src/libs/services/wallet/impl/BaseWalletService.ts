@@ -59,7 +59,7 @@ export abstract class BaseWalletService implements IWalletService {
         const queryBuilder = this.walletRepo.createQueryBuilder("wallet")
         if (params.accounts) {
             return await queryBuilder
-                .where("wallet.address IN (...accounts)", { accounts: params.accounts })
+                .where("wallet.address IN (:...accounts)", { accounts: params.accounts })
                 .getMany()
         }
         if (!params.cluster) {

@@ -1,5 +1,5 @@
 import { BaseOrderWithTagResponseDto, PollOrderDto } from "src/modules/order/dtos/base-order.dto";
-import { CreateSwapOrderDto, QuerySwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
+import { CreateBatchedSwapOrderDto, CreateSwapOrderDto, QuerySwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, CreateTransferOrderDto, QueryTransferOrderDto, TransferOrderResponseDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, QueryWithdrawalOrderDto, WithdrawalOrderResponseDto } from "src/modules/order/dtos/withdrawal-order.dto";
 
@@ -10,7 +10,7 @@ export interface IOrderService {
         params: CreateSwapOrderDto
     ): Promise<SwapOrderResponseDto>;
 
-    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<SwapOrderResponseDto[]>;
+    executeSwapsInBatch(params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]>;
 
     transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto>;
     transferInBatch(params: CreateBatchedTransferDto): Promise<TransferOrderResponseDto[]>;

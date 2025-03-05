@@ -1,7 +1,9 @@
-import { Wallet } from "ethers";
-import { KodiakRouter02__factory, UniswapV2Router__factory } from "src/contracts";
+import { TransactionRequest, Wallet } from "ethers";
+import { UniswapV2Router__factory } from "src/contracts";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { BerachainConsts } from "./consts";
+import { NATIVE, NetworkConfigs } from "src/libs/consts";
+import { Web3Helper } from "src/libs/services/web3";
 
 export namespace KodiakSwapper {
     export async function executeSwap(
@@ -12,41 +14,67 @@ export namespace KodiakSwapper {
         amountOutMin: bigint,
         recipient?: string
     ) {
-        await EVMTokenHelper.approveIfNeeded(wallet, BerachainConsts.KODIAK_ROUTER, tokenIn, amountIn);
+        const isTokenInNative = tokenIn === NATIVE;
+        if (!isTokenInNative)
+            await EVMTokenHelper.approveIfNeeded(wallet, BerachainConsts.KODIAK_ROUTER, tokenIn, amountIn);
         const sc = UniswapV2Router__factory.connect(BerachainConsts.KODIAK_ROUTER, wallet);
         const tx = await sc.swapExactTokensForTokens(
             amountIn,
             amountOutMin,
             [
-                tokenIn,
+                isTokenInNative ? NetworkConfigs['berachain'].wrappedNative : tokenIn,
                 tokenOut
             ],
-            recipient ?? wallet.address
+            recipient ?? wallet.address,
+            {
+                value: isTokenInNative ? amountIn : 0n
+            }
         );
         await tx.wait();
         return tx.hash;
     }
-    export async function executeSwapV2(
+
+    export async function prepareForSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,
         amountIn: bigint,
         amountOutMin: bigint,
+        gasPrice: bigint,
         recipient?: string
     ) {
-        await EVMTokenHelper.approveIfNeeded(wallet, BerachainConsts.KODIAK_ROUTER_V2, tokenIn, amountIn);
-        const sc = KodiakRouter02__factory.connect(BerachainConsts.KODIAK_ROUTER_V2, wallet);
-        const tx = await sc.swapExactTokensForTokens(
-            amountIn,
-            amountOutMin,
+
+        const isTokenInNative = tokenIn === NATIVE;
+
+        if (!isTokenInNative)
+            await EVMTokenHelper.approveIfNeeded(wallet, BerachainConsts.KODIAK_ROUTER, tokenIn, amountIn);
+
+        const nonce = await wallet.getNonce();
+        const data = UniswapV2Router__factory.createInterface().encodeFunctionData(
+            "swapExactTokensForTokens",
             [
-                tokenIn,
-                tokenOut
-            ],
-            recipient ?? wallet.address,
-            Date.now() + 1000000
-        );
-        await tx.wait();
-        return tx.hash;
+                amountIn,
+                amountOutMin,
+                [
+                    Web3Helper.getERC20Representation('berachain', tokenIn),
+                    Web3Helper.getERC20Representation('berachain', tokenOut)
+                ],
+                recipient ?? wallet.address,
+            ]
+        )
+        const tx: TransactionRequest = {
+            from: wallet.address,
+            to: BerachainConsts.KODIAK_ROUTER,
+            value: isTokenInNative ? amountIn : 0n,
+            data,
+            type: 0,
+            chainId: NetworkConfigs["berachain"].chainId,
+            nonce,
+            gasLimit: 300_000n,
+            gasPrice
+        }
+
+        const signedTx = await wallet.signTransaction(tx);
+        return signedTx;
     }
 }

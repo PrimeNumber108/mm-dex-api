@@ -1,4 +1,4 @@
-import { CreateSwapOrderDto, SwapOrderResponseDto, QuerySwapOrderDto } from "src/modules/order/dtos/swap-order.dto";
+import { CreateSwapOrderDto, SwapOrderResponseDto, QuerySwapOrderDto, CreateBatchedSwapOrderDto } from "src/modules/order/dtos/swap-order.dto";
 import { CreateTransferOrderDto, TransferOrderResponseDto, CreateBatchedTransferDto, CreateBatchedTransferMultiSendersDto, QueryTransferOrderDto } from "src/modules/order/dtos/transfer-order.dto";
 import { CreateWithdrawalOrderDto, WithdrawalOrderResponseDto, QueryWithdrawalOrderDto } from "src/modules/order/dtos/withdrawal-order.dto";
 import { IOrderService } from "../IOrderService";
@@ -8,9 +8,10 @@ import { WithdrawalOrder } from "src/modules/order/entities/withdrawal-order.ent
 import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
 import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "../../wallet/IWalletService";
-import { PollOrderDto, BaseOrderWithTagResponseDto, BaseOrderResponseDto } from "src/modules/order/dtos/base-order.dto";
+import { PollOrderDto, BaseOrderWithTagResponseDto } from "src/modules/order/dtos/base-order.dto";
 import { BaseOrder } from "src/modules/order/entities/base-order";
 import { PairService } from "src/modules/pair/pair.service";
+import { NATIVE, NetworkConfigs } from "src/libs/consts";
 
 export abstract class BaseOrderService implements IOrderService {
     constructor(
@@ -21,16 +22,16 @@ export abstract class BaseOrderService implements IOrderService {
         protected readonly tokenService: TokenService,
         protected readonly pairService: PairService,
         protected readonly walletService: IWalletService
-    ){
+    ) {
 
     }
 
-    timeRangeQuery(queryBuilder: SelectQueryBuilder<BaseOrder>, fromTs?: number, toTs?: number){
-        if(fromTs){
-            queryBuilder.andWhere("order.executionTime >= :fromTs", {fromTs});
+    timeRangeQuery(queryBuilder: SelectQueryBuilder<BaseOrder>, fromTs?: number, toTs?: number) {
+        if (fromTs) {
+            queryBuilder.andWhere("order.executionTime >= :fromTs", { fromTs });
         }
-        if(toTs){
-            queryBuilder.andWhere("order.executionTime < :toTs", {toTs});
+        if (toTs) {
+            queryBuilder.andWhere("order.executionTime < :toTs", { toTs });
         }
     }
     async poll(params: PollOrderDto): Promise<BaseOrderWithTagResponseDto[]> {
@@ -42,14 +43,14 @@ export abstract class BaseOrderService implements IOrderService {
         let withdrawals: BaseOrderWithTagResponseDto[] = [];
         let swaps: BaseOrderWithTagResponseDto[] = [];
 
-        if(!tag || tag === 'transfer'){
-            transfers = (await this.queryTransfers(baseQuery)).map(order => ({...order, tag: 'transfer'}));
+        if (!tag || tag === 'transfer') {
+            transfers = (await this.queryTransfers(baseQuery)).map(order => ({ ...order, tag: 'transfer' }));
         }
-        if(!tag || tag === 'withdrawal'){
-            withdrawals = (await this.queryWithdrawals(baseQuery)).map(order => ({...order, tag: 'withdraw'}));
+        if (!tag || tag === 'withdrawal') {
+            withdrawals = (await this.queryWithdrawals(baseQuery)).map(order => ({ ...order, tag: 'withdraw' }));
         }
-        if(!tag || tag === 'swap'){
-            swaps = (await this.querySwaps(baseQuery)).map(order => ({...order, tag: 'swap'}));
+        if (!tag || tag === 'swap') {
+            swaps = (await this.querySwaps(baseQuery)).map(order => ({ ...order, tag: 'swap' }));
         }
 
         return [
@@ -62,7 +63,7 @@ export abstract class BaseOrderService implements IOrderService {
     executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
         throw new Error("Method not implemented.");
     }
-    executeSwapsInBatch(params: CreateSwapOrderDto[]): Promise<SwapOrderResponseDto[]> {
+    executeSwapsInBatch(params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]> {
         throw new Error("Method not implemented.");
     }
     transfer(params: CreateTransferOrderDto): Promise<TransferOrderResponseDto> {
@@ -122,5 +123,5 @@ export abstract class BaseOrderService implements IOrderService {
         const records = this.withdrawalRepo.create(params);
         return await this.withdrawalRepo.save(records);
     }
-    
+
 }
