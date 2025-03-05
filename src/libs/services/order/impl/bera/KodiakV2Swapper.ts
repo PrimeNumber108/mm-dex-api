@@ -22,8 +22,8 @@ export namespace KodiakSwapper {
             amountIn,
             amountOutMin,
             [
-                isTokenInNative ? NetworkConfigs['berachain'].wrappedNative : tokenIn,
-                tokenOut
+                Web3Helper.getERC20Representation('berachain', tokenIn),
+                Web3Helper.getERC20Representation('berachain', tokenOut)
             ],
             recipient ?? wallet.address,
             {

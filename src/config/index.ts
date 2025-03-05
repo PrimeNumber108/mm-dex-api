@@ -12,6 +12,8 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(3000),
 
     BERA_RPC: Joi.string().required(),
+    A8_RPC: Joi.string().required(),
+    METIS_RPC: Joi.string().required(),
 
     PASSPHRASE: Joi.string().required(),
 
@@ -53,5 +55,7 @@ export const env = {
   },
   web3: {
     beraRpc: envVars.BERA_RPC,
+    a8Rpc: envVars.A8_RPC,
+    metisRpc: envVars.METIS_RPC
   },
 };
