@@ -19,9 +19,6 @@ RUN yarn build
 # Use a smaller base image for the final stage
 FROM node:20-alpine3.19 AS runner
 
-# Set NODE_ENV to production for runtime optimizations
-ENV NODE_ENV=production
-
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
@@ -29,7 +26,7 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/ ./
 
 # Expose the port
-EXPOSE 5050
+EXPOSE 3000
 
 # Command to run only echo 1
 CMD ["yarn", "start"]

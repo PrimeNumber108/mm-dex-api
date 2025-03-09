@@ -19,10 +19,10 @@ const envVarsSchema = Joi.object()
 
     POSTGRES_USER: Joi.string().required(),
     POSTGRES_PASSWORD: Joi.string().required(),
-    POSTGRES_HOST: Joi.string().required(),
+    POSTGRES_HOST: Joi.string().default("localhost"),
 
     REDIS_PASSWORD: Joi.string().required(),
-    REDIS_HOST: Joi.string().required(),
+    REDIS_HOST: Joi.string().default("localhost"),
 
     ROOT_ADMIN_API_SECRET: Joi.string().required(),
   })

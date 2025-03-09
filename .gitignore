@@ -403,3 +403,5 @@ contracts
 */migrations/*
 
 .vscode/*
+
+data
