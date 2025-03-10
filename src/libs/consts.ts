@@ -28,6 +28,13 @@ export const NetworkConfigs: {[key: string]: NetworkConfig} = {
     rpc: env.web3.metisRpc,
     currency: "METIS",
     wrappedNative: "0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481"
+  },
+  "arbitrum": {
+    chainId: 42161,
+    name: "arbitrum",
+    rpc: env.web3.arbRpc,
+    currency: "ETH",
+    wrappedNative: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
   }
 }
 

@@ -7,10 +7,10 @@ import { TokenService } from "src/modules/token/token.service";
 import { IWalletService } from "src/libs/services/wallet/IWalletService";
 import { NotFoundException } from "@nestjs/common";
 import { PairService } from "src/modules/pair/pair.service";
-import { DojoSwapper } from "./DojoSwapper";
+import { CamelotSwapper } from "./CamelotSwapper";
 import { IEVMSwapper } from "../../IEVMSwapper";
 
-export class A8OrderService extends BaseEVMOrderService {
+export class ARBOrderService extends BaseEVMOrderService {
     constructor(
         transferRepo: Repository<TransferOrder>,
         withdrawalRepo: Repository<WithdrawalOrder>,
@@ -19,18 +19,18 @@ export class A8OrderService extends BaseEVMOrderService {
         pairService: PairService,
         walletService: IWalletService
     ) {
-        super("a8", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
+        super("arbitrum", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
     }
 
-    getSwapper(protocol: string): IEVMSwapper {
-        switch (protocol) {
-            case "dojo-v2": {
-                return new DojoSwapper();
-            }
-
-            default: {
-                throw new NotFoundException("Protocol is not supported");
+        getSwapper(protocol: string): IEVMSwapper {
+            switch (protocol) {
+                case "camelot-v2": {
+                    return new CamelotSwapper();
+                }
+    
+                default: {
+                    throw new NotFoundException("Protocol is not supported");
+                }
             }
         }
-    }
 }

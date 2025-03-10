@@ -4,9 +4,10 @@ import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { BerachainConsts } from "./consts";
 import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { Web3Helper } from "src/libs/services/web3";
+import { IEVMSwapper } from "../../IEVMSwapper";
 
-export namespace KodiakSwapper {
-    export async function executeSwap(
+export class KodiakSwapper implements IEVMSwapper {
+    async executeSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,
@@ -34,7 +35,7 @@ export namespace KodiakSwapper {
         return tx.hash;
     }
 
-    export async function prepareForSwap(
+    async prepareForSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,

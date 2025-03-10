@@ -13,6 +13,8 @@ import { ERC20__factory } from "src/contracts";
 import { TokenService } from "src/modules/token/token.service";
 import { BadRequestException } from "@nestjs/common";
 import { PairService } from "src/modules/pair/pair.service";
+import { CreateBatchedSwapOrderDto, CreateSwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
+import { IEVMSwapper } from "../IEVMSwapper";
 
 export abstract class BaseEVMOrderService extends BaseOrderService {
 
@@ -40,26 +42,26 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
 
     async estimateTransferGas(wallet: Wallet, token: string) {
         let tx: TransactionRequest;
-        if(token === NATIVE){
+        if (token === NATIVE) {
             tx = {
                 from: wallet.address,
                 to: '0x267f2A39989dD184E010BF2Ac970df0297b686a7',
                 value: parseEther('0.000000000000001'),
                 chainId: NetworkConfigs[this.chain].chainId,
             }
-        }else {
-        const txData = ERC20__factory.createInterface().encodeFunctionData(
-            "transfer",
-            [token, BigInt(1)]
-        );
-        tx = {
-            from: wallet.address,
-            to: token,
-            data: txData,
-            value: '0x0',
-            chainId: NetworkConfigs[this.chain].chainId,
+        } else {
+            const txData = ERC20__factory.createInterface().encodeFunctionData(
+                "transfer",
+                [token, BigInt(1)]
+            );
+            tx = {
+                from: wallet.address,
+                to: token,
+                data: txData,
+                value: '0x0',
+                chainId: NetworkConfigs[this.chain].chainId,
+            }
         }
-    }
         return await wallet.estimateGas(tx);
     }
     async fastTransferToken(
@@ -226,4 +228,82 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         }
     }
 
+    getSwapper(protocol: string): IEVMSwapper {
+        throw new Error("Method not implemented!");
+    }
+    async executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
+        const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
+        const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
+        const recipient = await this.walletService.assertKnownAccount({
+            address: params.recipient
+        })
+        const wallet = await this.getSrcWallet(params);
+
+        const swapper = this.getSwapper(params.protocol);
+
+        const txHash = await swapper.executeSwap(
+            wallet,
+            params.tokenIn,
+            params.tokenOut,
+            parseUnits(params.amountIn, tokenIn.decimals),
+            parseUnits(params.amountOutMin, tokenOut.decimals),
+            recipient
+        );
+
+        const creationDto: CreateSwapOrderDto = {
+            ...params,
+            txHash
+        }
+
+        return await this.swapRepo.save(this.swapRepo.create(creationDto));
+    }
+    async executeSwapsInBatch(params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]> {
+        const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
+        const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
+        const recipients = await this.walletService.assertKnownAccounts({
+            accounts: params.items.map(o => o.recipient)
+        });
+        const wallets = await this.walletService.assertWalletsForExecution({
+            accounts: params.items.map(o => o.account)
+        })
+        const feeData = await this.provider.getFeeData();
+        const gasPrice = feeData.gasPrice;
+        const swapper = this.getSwapper(params.protocol);
+        const signedTxs = await Promise.all(wallets.map(async (wallet, idx) => {
+            const recipient = recipients[idx];
+            const amountIn = parseUnits(params.items[0].amountIn, tokenIn.decimals);
+            const amountOutMin = parseUnits(params.items[0].amountOutMin, tokenIn.decimals);
+
+            return await swapper.prepareForSwap(
+                new Wallet(wallet.privateKey, this.provider),
+                tokenIn.address,
+                tokenOut.address,
+                amountIn,
+                amountOutMin,
+                gasPrice,
+                recipient
+            );
+        }));
+
+        const responses = await Promise.all(signedTxs.map(tx => this.provider.broadcastTransaction(tx)));
+        const txHashes = responses.map(res => res.hash);
+        const creationDtos: CreateSwapOrderDto[] = txHashes.map((txHash, idx) => {
+            const dto: CreateSwapOrderDto = {
+                txHash,
+                tokenIn: params.tokenIn,
+                tokenOut: params.tokenOut,
+                recipient: params.items[idx].recipient,
+                protocol: params.protocol,
+                amountIn: params.items[idx].amountIn,
+                amountOutMin: params.items[idx].amountOutMin,
+                username: params.username,
+                chain: params.chain,
+                account: params.items[idx].account
+            }
+
+            return dto;
+        })
+
+        return await this.swapRepo.save(this.swapRepo.create(creationDtos));
+    }
 }

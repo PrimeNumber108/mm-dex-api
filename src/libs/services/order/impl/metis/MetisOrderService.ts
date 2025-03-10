@@ -10,6 +10,7 @@ import { NotFoundException } from "@nestjs/common";
 import { parseUnits, Wallet } from "ethers";
 import { PairService } from "src/modules/pair/pair.service";
 import { HerculesV2Swapper } from "./HerculesV2Swapper";
+import { IEVMSwapper } from "../../IEVMSwapper";
 
 export class MetisOrderService extends BaseEVMOrderService {
     constructor(
@@ -23,93 +24,15 @@ export class MetisOrderService extends BaseEVMOrderService {
         super("metis", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
     }
 
-    async executeSwap(params: CreateSwapOrderDto): Promise<SwapOrderResponseDto> {
-        const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
-        const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
-        const recipient = await this.walletService.assertKnownAccount({
-            address: params.recipient
-        })
-        const wallet = await this.getSrcWallet(params);
-        let txHash: string;
-        switch (params.protocol) {
+    getSwapper(protocol: string): IEVMSwapper {
+        switch (protocol) {
             case "hercules-v2": {
-                txHash = await HerculesV2Swapper.executeSwap(
-                    wallet,
-                    params.tokenIn,
-                    params.tokenOut,
-                    parseUnits(params.amountIn, tokenIn.decimals),
-                    parseUnits(params.amountOutMin, tokenOut.decimals),
-                    recipient
-                );
-                break;
+                return new HerculesV2Swapper();
             }
 
             default: {
                 throw new NotFoundException("Protocol is not supported");
             }
         }
-
-        const creationDto: CreateSwapOrderDto = {
-            ...params,
-            txHash
-        }
-
-        return await this.swapRepo.save(this.swapRepo.create(creationDto));
-    }
-    async executeSwapsInBatch(params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]> {
-        const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
-        const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
-        const recipients = await this.walletService.assertKnownAccounts({
-            accounts: params.items.map(o => o.recipient)
-        });
-        const wallets = await this.walletService.assertWalletsForExecution({
-            accounts: params.items.map(o => o.account)
-        })
-        const feeData = await this.provider.getFeeData();
-        const gasPrice = feeData.gasPrice;
-        const signedTxs = await Promise.all(wallets.map(async (wallet, idx) => {
-            const recipient = recipients[idx];
-            const amountIn = parseUnits(params.items[0].amountIn, tokenIn.decimals);
-            const amountOutMin = parseUnits(params.items[0].amountOutMin, tokenIn.decimals);
-
-            switch (params.protocol) {
-                case "hercules-v2": {
-                    return await HerculesV2Swapper.prepareForSwap(
-                        new Wallet(wallet.privateKey, this.provider),
-                        tokenIn.address,
-                        tokenOut.address,
-                        amountIn,
-                        amountOutMin,
-                        gasPrice,
-                        recipient
-                    )
-                }
-
-                default: {
-                    throw new NotFoundException("Protocol is not supported");
-                }
-            }
-        }));
-
-        const responses = await Promise.all(signedTxs.map(tx => this.provider.broadcastTransaction(tx)));
-        const txHashes = responses.map(res => res.hash);
-        const creationDtos: CreateSwapOrderDto[] = txHashes.map((txHash, idx) => {
-            const dto: CreateSwapOrderDto = {
-                txHash,
-                tokenIn: params.tokenIn,
-                tokenOut: params.tokenOut,
-                recipient: params.items[idx].recipient,
-                protocol: params.protocol,
-                amountIn: params.items[idx].amountIn,
-                amountOutMin: params.items[idx].amountOutMin,
-                username: params.username,
-                chain: params.chain,
-                account: params.items[idx].account
-            }
-
-            return dto;
-        })
-
-        return await this.swapRepo.save(this.swapRepo.create(creationDtos));
     }
 }

@@ -5,16 +5,16 @@ import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { BerachainConsts } from "./consts";
 import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { Web3Helper } from "src/libs/services/web3";
-export namespace HoldsoSwapper {
-
-    export async function executeSwap(
+import { IEVMSwapper } from "../../IEVMSwapper";
+export class HoldsoSwapper implements IEVMSwapper {
+    async executeSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,
-        fee: bigint,
         amountIn: bigint,
         amountOutMin: bigint,
-        recipient?: string
+        recipient?: string,
+        fee?: bigint,
     ) {
         if (tokenIn !== NATIVE)
             await EVMTokenHelper.approveIfNeeded(wallet, BerachainConsts.HOLDSO_ROUTER_ADDRESS, tokenIn, amountIn);
@@ -22,7 +22,7 @@ export namespace HoldsoSwapper {
         const params: ISwapRouter.ExactInputSingleParamsStruct = {
             tokenIn: Web3Helper.getERC20Representation('berachain', tokenIn),
             tokenOut: Web3Helper.getERC20Representation('berachain', tokenOut),
-            fee,
+            fee: fee ?? BigInt(3000),
             recipient: recipient ?? wallet.address,
             deadline: Date.now() + 60000,
             amountIn: amountIn,
@@ -36,15 +36,15 @@ export namespace HoldsoSwapper {
         return tx.hash;
     }
 
-    export async function prepareForSwap(
+    async prepareForSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,
-        fee: bigint,
         amountIn: bigint,
         amountOutMin: bigint,
         gasPrice: bigint,
-        recipient?: string
+        recipient?: string,
+        fee?: bigint
     ) {
 
         const isTokenInNative = tokenIn === NATIVE;
@@ -56,7 +56,7 @@ export namespace HoldsoSwapper {
         const params: ISwapRouter.ExactInputSingleParamsStruct = {
             tokenIn: Web3Helper.getERC20Representation('berachain', tokenIn),
             tokenOut: Web3Helper.getERC20Representation('berachain', tokenOut),
-            fee,
+            fee: fee ?? BigInt(3000),
             recipient: recipient ?? wallet.address,
             deadline: Date.now() + 60000,
             amountIn: amountIn,

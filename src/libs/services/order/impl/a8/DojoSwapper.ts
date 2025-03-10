@@ -4,9 +4,10 @@ import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { A8Consts } from "./consts";
 import { DojoRouter__factory } from "src/contracts";
 import { Web3Helper } from "src/libs/services/web3";
+import { IEVMSwapper } from "../../IEVMSwapper";
 
-export namespace DojoSwapper {
-    export async function executeSwap(
+export class DojoSwapper implements IEVMSwapper {
+    async executeSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,
@@ -63,7 +64,7 @@ export namespace DojoSwapper {
         return tx.hash;
     }
 
-    export async function prepareForSwap(
+    async prepareForSwap(
         wallet: Wallet,
         tokenIn: string,
         tokenOut: string,

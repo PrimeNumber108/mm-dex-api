@@ -1,12 +1,12 @@
 import { ContractTransactionResponse, TransactionRequest, Wallet, ZeroAddress } from "ethers";
+import { CamelotRouter__factory } from "src/contracts";
+import { ARBConsts } from "./consts";
 import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { Web3Helper } from "src/libs/services/web3";
-import { MetisConsts } from "./consts";
-import { HerculesV2Router__factory } from "src/contracts";
 import { IEVMSwapper } from "../../IEVMSwapper";
 
-export class HerculesV2Swapper implements IEVMSwapper {
+export class CamelotSwapper implements IEVMSwapper {
     async executeSwap(
         wallet: Wallet,
         tokenIn: string,
@@ -19,8 +19,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
         const isTokenOutNative = tokenOut === NATIVE;
 
         if (!isTokenInNative)
-            await EVMTokenHelper.approveIfNeeded(wallet, MetisConsts.HERCULES_V2_ROUTER, tokenIn, amountIn);
-        const sc = HerculesV2Router__factory.connect(MetisConsts.HERCULES_V2_ROUTER, wallet);
+            await EVMTokenHelper.approveIfNeeded(wallet, ARBConsts.CAMELOT_V2_ROUTER, tokenIn, amountIn);
+        const sc = CamelotRouter__factory.connect(ARBConsts.CAMELOT_V2_ROUTER, wallet);
         let tx: ContractTransactionResponse;
 
         if (!isTokenInNative && !isTokenOutNative) {
@@ -80,13 +80,13 @@ export class HerculesV2Swapper implements IEVMSwapper {
         const isTokenInNative = tokenIn === NATIVE;
         const isTokenOutNative = tokenOut === NATIVE;
         if (!isTokenInNative)
-            await EVMTokenHelper.approveIfNeeded(wallet, MetisConsts.HERCULES_V2_ROUTER, tokenIn, amountIn);
+            await EVMTokenHelper.approveIfNeeded(wallet, ARBConsts.CAMELOT_V2_ROUTER, tokenIn, amountIn);
 
         const nonce = await wallet.getNonce();
         let data: string;
 
         if (!isTokenInNative && !isTokenOutNative) {
-            data = HerculesV2Router__factory.createInterface().encodeFunctionData(
+            data = CamelotRouter__factory.createInterface().encodeFunctionData(
                 "swapExactTokensForTokensSupportingFeeOnTransferTokens",
                 [
                     amountIn,
@@ -101,7 +101,7 @@ export class HerculesV2Swapper implements IEVMSwapper {
                 ]
             )
         } else if (isTokenInNative) {
-            data = HerculesV2Router__factory.createInterface().encodeFunctionData(
+            data = CamelotRouter__factory.createInterface().encodeFunctionData(
                 "swapExactETHForTokensSupportingFeeOnTransferTokens",
                 [
                     amountOutMin,
@@ -115,7 +115,7 @@ export class HerculesV2Swapper implements IEVMSwapper {
                 ]
             )
         } else if (isTokenOutNative) {
-            data = HerculesV2Router__factory.createInterface().encodeFunctionData(
+            data = CamelotRouter__factory.createInterface().encodeFunctionData(
                 "swapExactTokensForETHSupportingFeeOnTransferTokens",
                 [
                     amountIn,
@@ -132,11 +132,11 @@ export class HerculesV2Swapper implements IEVMSwapper {
         }
         const tx: TransactionRequest = {
             from: wallet.address,
-            to: MetisConsts.HERCULES_V2_ROUTER,
+            to: ARBConsts.CAMELOT_V2_ROUTER,
             value: isTokenInNative ? amountIn : 0n,
             data,
             type: 0,
-            chainId: NetworkConfigs["metis"].chainId,
+            chainId: NetworkConfigs["arbitrum"].chainId,
             nonce,
             gasLimit: 300_000n,
             gasPrice
