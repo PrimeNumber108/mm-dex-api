@@ -9,6 +9,7 @@ import { NotFoundException } from "@nestjs/common";
 import { PairService } from "src/modules/pair/pair.service";
 import { A8OrderService } from "./impl/a8/A8OrderService";
 import { MetisOrderService } from "./impl/metis/MetisOrderService";
+import { ARBOrderService } from "./impl/arb/ArbOrderService";
 
 export class OrderServiceFactory {
     constructor(
@@ -31,8 +32,12 @@ export class OrderServiceFactory {
                 return new A8OrderService(
                     this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
-            case "metis": 
+            case "metis":
                 return new MetisOrderService(
+                    this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
+                )
+            case "arbitrum":
+                return new ARBOrderService(
                     this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
             default: {
