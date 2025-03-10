@@ -51,4 +51,14 @@ export class TokenController {
     async getToken(@Query() params: QueryTokenDto): Promise<TokenResponseDto> {
         return await this.tokenService.getToken(params);
     }
+
+    @Get('/poll')
+    @ApiResponse({
+        status: 200,
+        type: [TokenResponseDto],
+        description: 'All Tokens'
+    })
+    async poll(): Promise<TokenResponseDto[]> {
+        return await this.tokenService.poll();
+    }
 }

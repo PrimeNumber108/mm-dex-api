@@ -51,4 +51,14 @@ export class PairController {
     async getPair(@Query() params: QueryPairDto): Promise<PairResponseDto> {
         return await this.pairService.getPair(params);
     }
+
+    @Get('/poll')
+    @ApiResponse({
+        status: 200,
+        type: [PairResponseDto],
+        description: 'All Pairs'
+    })
+    async poll(): Promise<PairResponseDto[]> {
+        return await this.pairService.poll();
+    }
 }

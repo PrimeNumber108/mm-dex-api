@@ -6,7 +6,7 @@ import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFact
 import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/decorators/roles.decorator";
 import { UserRole } from "../user/user.entity";
-import { EncryptedDto, GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto } from "./dtos/upsert-wallet.dto";
+import { EncryptedDto, GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto, SupportChainsDto } from "./dtos/upsert-wallet.dto";
 import { CryptoHelper } from "src/libs/utils/crypto-helper";
 import { WalletResponseDto } from "./dtos/wallet.dto";
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-wallet.dto";
@@ -63,9 +63,8 @@ export class WalletController {
         description: 'Encrypted wallet'
     })
     async generateWallet(
-        @Body() { payload }: EncryptedDto
+        @Body() params: GenerateWalletDto
     ): Promise<string> {
-        const params: GenerateWalletDto = JSON.parse(CryptoHelper.decrypt(payload));
         const service = this.factory.getWalletService(params.chain);
         const response = await service.generateWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));
@@ -79,9 +78,8 @@ export class WalletController {
         description: 'Encrypted cluster'
     })
     async generateCluster(
-        @Body() { payload }: EncryptedDto
+        @Body() params: GenerateClusterDto
     ): Promise<string> {
-        const params: GenerateClusterDto = JSON.parse(CryptoHelper.decrypt(payload));
         const service = this.factory.getWalletService(params.chain);
         const response = await service.generateCluster(params);
         return CryptoHelper.encrypt(JSON.stringify(response));
@@ -99,6 +97,20 @@ export class WalletController {
     ): Promise<boolean> {
         const service = this.factory.getWalletService("berachain");
         return await service.renameCluster(params);
+    }
+
+    @Put('/support-chains')
+    @Roles(UserRole.ADMIN)
+    @ApiResponse({
+        status: 201,
+        type: [WalletResponseDto],
+        description: 'Updated wallets'
+    })
+    async supportChains(
+        @Body() params: SupportChainsDto
+    ): Promise<WalletResponseDto[]> {
+        const service = this.factory.getWalletService("berachain");
+        return await service.supportChains(params);
     }
 
     @Get('/cluster')
@@ -147,6 +159,17 @@ export class WalletController {
         const service = this.factory.getWalletService("berachain");
         const response = await service.assertWalletsForExecution(params);
         return CryptoHelper.encrypt(JSON.stringify(response));
+    }
+
+    @Get('/poll')
+    @ApiResponse({
+        status: 200,
+        type: [WalletResponseDto],
+        description: 'All wallets'
+    })
+    async poll(): Promise<WalletResponseDto[]> {
+        const service = this.factory.getWalletService("berachain");
+        return await service.poll();
     }
 
 }

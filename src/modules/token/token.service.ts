@@ -55,4 +55,8 @@ export class TokenService {
     ): Promise<boolean>{
         return (await this.tokenRepo.delete(params)).affected > 0;
     }
+
+    async poll(): Promise<TokenResponseDto[]> {
+        return await this.tokenRepo.find({});
+    }
 }

@@ -1,5 +1,5 @@
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "src/modules/wallet/dtos/query-wallet.dto";
-import { GenerateClusterDto, ImportClusterDto, ImportWalletDto, GenerateWalletDto, RenameClusterDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
+import { GenerateClusterDto, ImportClusterDto, ImportWalletDto, GenerateWalletDto, RenameClusterDto, SupportChainsDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto, WalletResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { IWalletService } from "../IWalletService";
 import { Repository } from "typeorm";
@@ -11,6 +11,30 @@ export abstract class BaseWalletService implements IWalletService {
         readonly chain: string,
         protected readonly walletRepo: Repository<Wallet>
     ) { }
+    async supportChains(params: SupportChainsDto): Promise<WalletResponseDto[]> {
+        const records = await this.walletRepo.findBy({cluster: params.cluster});
+        const updatedRecords = records.map((r) => {
+            const chains = Array.from(new Set([...r.chains, ...params.chains]));
+
+            return {
+                ...r,
+                chains
+            }
+        })
+
+        const updatedWallets = await this.walletRepo.save(updatedRecords);
+        return updatedWallets.map(w => {
+            const {privateKey, ...rest} = w;
+            return {...rest};
+        }) 
+    }
+    async poll(): Promise<WalletResponseDto[]> {
+        const wallets = await this.walletRepo.find({});
+        return wallets.map(w => {
+            const {privateKey, ...rest} = w;
+            return {...rest};
+        })
+    }
     async renameCluster(params: RenameClusterDto): Promise<boolean> {
         return (await this.walletRepo.update({
             cluster: params.cluster

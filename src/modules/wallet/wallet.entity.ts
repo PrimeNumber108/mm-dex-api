@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/libs/base/base-entity';
 import { TypeormTransformers } from 'src/libs/utils/transformers';
-import { Column, Entity, Index } from 'typeorm';
+import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
 
 @Entity()
 @Index(['address'], { unique: true })
@@ -20,4 +20,11 @@ export class Wallet extends BaseEntity {
 
   @Column({ nullable: false, default: 'no' })
   cluster: string;
+  @Column({
+    type: 'text',  // Store as TEXT in the database
+    nullable: false,
+    default: '',
+    transformer: TypeormTransformers.stringArrayTransformer,  // Use our transformer
+  })
+  chains: string[];
 }

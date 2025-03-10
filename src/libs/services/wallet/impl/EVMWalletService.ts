@@ -21,7 +21,8 @@ export class EVMWalletService extends BaseWalletService {
                 address: wallet.address,
                 privateKey: wallet.privateKey,
                 cluster: params.cluster,
-                index: i
+                index: i,
+                chains: [params.chain]
             }))
         }
         return await this.walletRepo.save(records);
@@ -34,7 +35,8 @@ export class EVMWalletService extends BaseWalletService {
                 address: wallet.address,
                 privateKey: wallet.privateKey,
                 cluster: params.cluster,
-                index: i
+                index: i,
+                chains: [params.chain]
             }))
         }
         return await this.walletRepo.save(records);
@@ -50,6 +52,7 @@ export class EVMWalletService extends BaseWalletService {
             address: wallet.address,
             privateKey: wallet.privateKey,
             cluster: params.cluster,
+            chains: [params.chain],
             index
         })
         return await this.walletRepo.save(record);
@@ -65,6 +68,7 @@ export class EVMWalletService extends BaseWalletService {
             address: wallet.address,
             privateKey: wallet.privateKey,
             cluster: params.cluster,
+            chains: [params.chain],
             index
         })
 

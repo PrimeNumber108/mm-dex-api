@@ -12,6 +12,9 @@ export class WalletPrivateResponseDto extends BaseResponse {
 
     @ApiResponseProperty({ type: Number })
     index: number;
+
+    @ApiResponseProperty({ type: [String] })
+    chains: string[];
 }
 
 export class WalletResponseDto extends OmitType(WalletPrivateResponseDto, ['privateKey']) { }

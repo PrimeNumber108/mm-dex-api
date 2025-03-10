@@ -85,3 +85,15 @@ export class RenameClusterDto {
     @IsString()
     newName: string;
 }
+
+export class SupportChainsDto {
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    cluster: string;
+
+    @ApiProperty({ type: [String] }) // Made required
+    @IsArray()
+    @ArrayMinSize(1)
+    chains: string[];
+}

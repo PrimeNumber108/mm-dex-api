@@ -55,4 +55,8 @@ export class PairService {
     ): Promise<boolean> {
         return (await this.pairRepo.delete(params)).affected > 0;
     }
+
+    async poll(): Promise<PairResponseDto[]> {
+        return await this.pairRepo.find({})
+    }
 }

@@ -1,5 +1,5 @@
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "src/modules/wallet/dtos/query-wallet.dto";
-import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
+import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto, SupportChainsDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto, WalletResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 
 export interface IWalletService {
@@ -21,4 +21,7 @@ export interface IWalletService {
     generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto>;
     // deactivateWallet(params: QueryWalletDto): Promise<string>; // return private key
     // deactivateCluster(params: QueryClusterDto): Promise<ClusterPrivateResponseDto>;
+
+    poll(): Promise<WalletResponseDto[]>;
+    supportChains(params: SupportChainsDto): Promise<WalletResponseDto[]>;
 }
