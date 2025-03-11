@@ -15,9 +15,9 @@ export const NetworkConfigs: {[key: string]: NetworkConfig} = {
     currency: "BERA",
     wrappedNative: "0x6969696969696969696969696969696969696969"
   },
-  "a8": {
+  "acient8": {
     chainId: 888888888,
-    name: "a8",
+    name: "acient8",
     rpc: env.web3.a8Rpc,
     currency: "ETH",
     wrappedNative: "0x4200000000000000000000000000000000000006"

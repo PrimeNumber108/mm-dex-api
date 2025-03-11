@@ -19,7 +19,7 @@ export class A8OrderService extends BaseEVMOrderService {
         pairService: PairService,
         walletService: IWalletService
     ) {
-        super("a8", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
+        super("acient8", transferRepo, withdrawalRepo, swapRepo, tokenService, pairService, walletService);
     }
 
     getSwapper(protocol: string): IEVMSwapper {

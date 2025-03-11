@@ -28,7 +28,7 @@ export class OrderServiceFactory {
                 return new BerachainOrderService(
                     this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
-            case "a8":
+            case "acient8":
                 return new A8OrderService(
                     this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
