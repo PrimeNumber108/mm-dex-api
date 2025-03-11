@@ -124,6 +124,17 @@ export class WalletController {
         return await service.getCluster(params);
     }
 
+    @Get('/cluster-addresses')
+    @ApiResponse({
+        status: 200,
+        type: [String],
+        description: 'Cluster addresses'
+    })
+    async getClusterAddresses(@Query() params: QueryClusterDto): Promise<string[]> {
+        const service = this.factory.getWalletService("berachain");
+        return await service.getClusterAddresses(params);
+    }
+
     @Get('/list-clusters')
     @ApiResponse({
         status: 200,

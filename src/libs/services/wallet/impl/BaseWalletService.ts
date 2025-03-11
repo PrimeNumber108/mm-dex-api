@@ -11,6 +11,10 @@ export abstract class BaseWalletService implements IWalletService {
         readonly chain: string,
         protected readonly walletRepo: Repository<Wallet>
     ) { }
+    async getClusterAddresses(params: QueryClusterDto): Promise<string[]> {
+        const wallets = await this.getCluster(params);
+        return wallets.map(w => w.address);
+    }
     async supportChains(params: SupportChainsDto): Promise<WalletResponseDto[]> {
         const records = await this.walletRepo.findBy({cluster: params.cluster});
         const updatedRecords = records.map((r) => {

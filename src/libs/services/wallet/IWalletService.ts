@@ -8,6 +8,7 @@ export interface IWalletService {
     listAllClusters(): Promise<string[]>;
 
     getCluster(params: QueryClusterDto): Promise<WalletResponseDto[]>;
+    getClusterAddresses(params: QueryClusterDto): Promise<string[]>;
     renameCluster(params: RenameClusterDto): Promise<boolean>;
     
     assertWalletForExecution(params: QueryWalletDto): Promise<WalletPrivateResponseDto>;

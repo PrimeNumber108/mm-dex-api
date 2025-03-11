@@ -130,7 +130,7 @@ export class DojoSwapper implements IEVMSwapper {
             value: isTokenInNative ? amountIn : 0n,
             data,
             type: 0,
-            chainId: NetworkConfigs["acient8"].chainId,
+            chainId: NetworkConfigs["ancient8"].chainId,
             nonce,
             gasLimit: 300_000n,
             gasPrice
