@@ -21,6 +21,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd mm_executor
+            cd mm-executor
             git pull origin main
             docker-compose up --build -d
