@@ -241,21 +241,26 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
 
         const swapper = this.getSwapper(params.protocol);
 
-        const txHash = await swapper.executeSwap(
-            wallet,
-            params.tokenIn,
-            params.tokenOut,
-            parseUnits(params.amountIn, tokenIn.decimals),
-            parseUnits(params.amountOutMin, tokenOut.decimals),
-            recipient
-        );
+        try {
+            const txHash = await swapper.executeSwap(
+                wallet,
+                params.tokenIn,
+                params.tokenOut,
+                parseUnits(params.amountIn, tokenIn.decimals),
+                parseUnits(params.amountOutMin, tokenOut.decimals),
+                recipient
+            );
 
-        const creationDto: CreateSwapOrderDto = {
-            ...params,
-            txHash
+            const creationDto: CreateSwapOrderDto = {
+                ...params,
+                txHash
+            }
+
+            return await this.swapRepo.save(this.swapRepo.create(creationDto));
+        } catch (err) {
+            console.log(err);
+            throw new BadRequestException(`Failed to execute order: ${(err as Error).message}`)
         }
-
-        return await this.swapRepo.save(this.swapRepo.create(creationDto));
     }
     async executeSwapsInBatch(params: CreateBatchedSwapOrderDto): Promise<SwapOrderResponseDto[]> {
         const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
