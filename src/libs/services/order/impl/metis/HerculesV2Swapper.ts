@@ -28,8 +28,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
                 amountIn,
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('metis', tokenIn),
+                    Web3Helper.getERC20Representation('metis', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 ZeroAddress,
@@ -39,8 +39,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
             tx = await sc.swapExactETHForTokensSupportingFeeOnTransferTokens(
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('metis', tokenIn),
+                    Web3Helper.getERC20Representation('metis', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 ZeroAddress,
@@ -55,8 +55,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
                 amountIn,
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('metis', tokenIn),
+                    Web3Helper.getERC20Representation('metis', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 ZeroAddress,
@@ -92,8 +92,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
                     amountIn,
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('metis', tokenIn),
+                        Web3Helper.getERC20Representation('metis', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     ZeroAddress,
@@ -106,8 +106,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
                 [
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('metis', tokenIn),
+                        Web3Helper.getERC20Representation('metis', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     ZeroAddress,
@@ -121,8 +121,8 @@ export class HerculesV2Swapper implements IEVMSwapper {
                     amountIn,
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('metis', tokenIn),
+                        Web3Helper.getERC20Representation('metis', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     ZeroAddress,
