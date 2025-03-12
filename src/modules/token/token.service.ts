@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { CreateTokenDto, QueryTokenDto, TokenResponseDto, UpdateTokenDto } from "./token-dto";
 import { InjectRedis } from "@nestjs-modules/ioredis";
 import Redis from "ioredis";
+import { NATIVE } from "src/libs/consts";
 
 @Injectable()
 export class TokenService {
@@ -59,6 +60,18 @@ export class TokenService {
     }
 
     async assertKnownToken(params: QueryTokenDto): Promise<TokenResponseDto> {
+        if (params.address === NATIVE) {
+            return {
+                address: NATIVE,
+                chain: params.chain,
+                name: 'ETH',
+                symbol: 'ETH',
+                decimals: 18,
+                id: 9999,
+                created_at: new Date(),
+                updated_at: new Date()
+            }
+        }
         const token = await this.getToken(params);
         if (!token) throw new NotFoundException('Token not found!');
 
@@ -79,13 +92,13 @@ export class TokenService {
 
     async removeToken(params: QueryTokenDto): Promise<boolean> {
         const tokensToDelete = await this.tokenRepo.findBy(params); // Fetch all matching tokens first
-    
+
         if (tokensToDelete.length === 0) {
             return false;
         }
-    
+
         const deleted = await this.tokenRepo.delete(params);
-    
+
         if (deleted.affected > 0) {
             // Remove from Redis for each deleted token
             const pipeline = this.redis.pipeline();
@@ -95,9 +108,9 @@ export class TokenService {
             await pipeline.exec();
             return true;
         }
-    
+
         return false;
-    }    
+    }
 
     async poll(): Promise<TokenResponseDto[]> {
         return await this.tokenRepo.find({});
