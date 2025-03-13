@@ -291,8 +291,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const swapper = this.getSwapper(params.protocol);
         const signedTxs = await Promise.all(wallets.map(async (wallet, idx) => {
             const recipient = recipients[idx];
-            const amountIn = parseUnits(params.items[0].amountIn, tokenIn.decimals);
-            const amountOutMin = parseUnits(params.items[0].amountOutMin, tokenIn.decimals);
+            const amountIn = parseUnits(params.items[idx].amountIn, tokenIn.decimals);
+            const amountOutMin = parseUnits(params.items[idx].amountOutMin, tokenIn.decimals);
 
             return await swapper.prepareForSwap(
                 new Wallet(wallet.privateKey, this.provider),
