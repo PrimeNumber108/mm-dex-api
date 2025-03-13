@@ -240,6 +240,12 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const recipient = await this.walletService.assertKnownAccount({
             address: params.recipient
         })
+
+        const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
+        const pair = await this.pairService.assertKnownPair({
+            protocol: params.protocol, chain: params.chain,
+            token0, token1
+        })
         const wallet = await this.getSrcWallet(params);
 
         const swapper = this.getSwapper(params.protocol);
@@ -251,7 +257,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 params.tokenOut,
                 parseUnits(params.amountIn, tokenIn.decimals),
                 parseUnits(params.amountOutMin, tokenOut.decimals),
-                recipient
+                recipient,
+                BigInt(pair.fee)
             );
 
             const creationDto: CreateSwapOrderDto = {
@@ -271,6 +278,11 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const recipients = await this.walletService.assertKnownAccounts({
             accounts: params.items.map(o => o.recipient)
         });
+        const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
+        const pair = await this.pairService.assertKnownPair({
+            protocol: params.protocol, chain: params.chain,
+            token0, token1
+        })
         const wallets = await this.walletService.assertWalletsForExecution({
             accounts: params.items.map(o => o.account)
         })
@@ -289,7 +301,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 amountIn,
                 amountOutMin,
                 gasPrice,
-                recipient
+                recipient,
+                BigInt(pair.fee)
             );
         }));
 
