@@ -137,19 +137,23 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
     async transferInBatch(params: CreateBatchedTransferDto): Promise<TransferOrderResponseDto[]> {
         const creationDtos: CreateBaseOrderDto[] = [];
         const recipients = await this.walletService.assertKnownAccounts(params.recipients);
+        const token = await this.tokenService.assertKnownToken({
+            address: params.token,
+            chain: params.chain
+        });
         const wallet = await this.getSrcWallet(params);
         let curNonce = await wallet.getNonce();
-        const gasLimit = await this.estimateTransferGas(wallet, params.token);
+        const gasLimit = await this.estimateTransferGas(wallet, token.address);
         const feeData = await this.provider.getFeeData();
         const gasPrice = feeData.gasPrice;
         for (let i = 0; i < params.amounts.length; i++) {
-            const amount = parseUnits(params.amounts[i]);
+            const amount = parseUnits(params.amounts[i], token.decimals);
             const recipient = recipients[i];
             try {
                 const hash = await this.fastTransferToken(
                     wallet,
                     curNonce++,
-                    params.token,
+                    token.address,
                     amount,
                     recipient,
                     gasLimit,
@@ -165,7 +169,6 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                     txHash: hash
                 }
 
-                console.log(transferCreationDto)
                 creationDtos.push(transferCreationDto);
             } catch (err) {
                 console.log(err);
