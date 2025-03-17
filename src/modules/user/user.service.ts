@@ -86,6 +86,7 @@ export class UserService implements OnModuleInit {
 
         if (params.newName) newRecord.username = params.newName;
         if (params.role) newRecord.role = params.role;
+        if (params.allowedClusters) newRecord.allowedClusters = params.allowedClusters;
 
         const user = await this.userRepo.save(newRecord);
         await this.cacheUser(user);

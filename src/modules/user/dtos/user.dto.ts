@@ -11,4 +11,7 @@ export class UserDto extends BaseResponse{
 
     @ApiResponseProperty({ enum: UserRole })
     role: UserRole;
+
+    @ApiResponseProperty({ type: [String] })
+    allowedClusters: string[];
 }

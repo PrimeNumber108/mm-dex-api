@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { UserRole } from "../user.entity";
 
 export class CreateUserDto {
@@ -8,7 +8,7 @@ export class CreateUserDto {
     @IsString()
     username: string;
 
-    @ApiProperty({enum: UserRole})
+    @ApiProperty({ enum: UserRole })
     @IsNotEmpty()
     @IsEnum(UserRole)
     role: UserRole;
@@ -37,7 +37,14 @@ export class UpdateUserDto {
     @ApiPropertyOptional({ type: String })
     newName?: string;
 
-    @ApiPropertyOptional({enum: UserRole})
+    @ApiPropertyOptional({ enum: UserRole })
     @IsEnum(UserRole)
     role?: UserRole;
+
+    @ApiPropertyOptional({ type: [String] })
+    @IsOptional()
+    @IsArray()
+    @ArrayNotEmpty() // Ensures that the array is not empty if provided
+    @IsString({ each: true }) // Ensures all elements in the array are strings
+    allowedClusters?: string[];
 }
