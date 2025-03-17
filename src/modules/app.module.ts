@@ -30,10 +30,10 @@ import { PairModule } from './pair/pair.module';
     }),
     HealthCheckModule,
     UserModule,
-    AuthModule,
     TokenModule,
     PairModule,
     WalletModule,
+    AuthModule,
     OrderModule,
   ],
 

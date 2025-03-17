@@ -9,6 +9,6 @@ import { Wallet } from "./wallet.entity";
   ],
   controllers: [WalletController],
   providers: [],
-  exports: [],
+  exports: [TypeOrmModule],
 })
 export class WalletModule {}
