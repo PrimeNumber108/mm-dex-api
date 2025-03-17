@@ -36,7 +36,7 @@ export class SyncswapSwapper implements IEVMSwapper {
         const paths = [
             {
                 steps: swapSteps,
-                tokenIn: tokenInERC20,
+                tokenIn: isTokenInNative ? ethers.ZeroAddress : tokenIn,
                 amountIn
             }
         ]
@@ -82,7 +82,7 @@ export class SyncswapSwapper implements IEVMSwapper {
         const paths = [
             {
                 steps: swapSteps,
-                tokenIn: tokenInERC20,
+                tokenIn: isTokenInNative ? ethers.ZeroAddress : tokenIn,
                 amountIn
             }
         ]
