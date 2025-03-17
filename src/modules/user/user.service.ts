@@ -7,6 +7,8 @@ import { randomBytes } from "crypto";
 import { env } from "src/config";
 import * as bcrypt from "bcrypt"; // 🔹 Import bcrypt for hashing
 import { UserDto } from "./dtos/user.dto";
+import { InjectRedis } from "@nestjs-modules/ioredis";
+import Redis from "ioredis";
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -14,8 +16,9 @@ export class UserService implements OnModuleInit {
 
     constructor(
         @InjectRepository(User)
-        private readonly userRepo: Repository<User>
-    ) {}
+        private readonly userRepo: Repository<User>,
+        @InjectRedis() private readonly redis: Redis
+    ) { }
 
     async onModuleInit() {
         const rootAdmin = await this.findUser('root-admin');
@@ -35,8 +38,28 @@ export class UserService implements OnModuleInit {
         this.logger.log("Root admin already exists!");
     }
 
+    private userRedisKey(username: string) {
+        return `User:${username}`;
+    }
+
+    private async cacheUser(user: User) {
+        await this.redis.set(this.userRedisKey(user.username), JSON.stringify(user), 'EX', 900);
+    }
+
+    private async getCachedUser(username: string) {
+        const cached = await this.redis.get(this.userRedisKey(username));
+        if (!cached) return null;
+        return JSON.parse(cached) as User;
+    }
+
     async findUser(username: string): Promise<User | null> {
-        return await this.userRepo.findOneBy({ username });
+        const cached = await this.getCachedUser(username);
+        if (cached) return cached;
+        const user = await this.userRepo.findOneBy({ username });
+        if (!user) return null;
+
+        await this.cacheUser(user);
+        return user;
     }
 
     async createUser(params: CreateUserDto): Promise<UserDto> {
@@ -49,8 +72,10 @@ export class UserService implements OnModuleInit {
         });
 
         const user = await this.userRepo.save(record);
+
+        await this.cacheUser(user);
         const { apiSecretHash, ...rest } = user;
-        return {...rest, apiSecret: rawSecret};
+        return { ...rest, apiSecret: rawSecret };
     }
 
     async updateUser(params: UpdateUserDto): Promise<UserDto> {
@@ -62,7 +87,10 @@ export class UserService implements OnModuleInit {
         if (params.newName) newRecord.username = params.newName;
         if (params.role) newRecord.role = params.role;
 
-        const { apiSecretHash, ...rest } = await this.userRepo.save(newRecord);
+        const user = await this.userRepo.save(newRecord);
+        await this.cacheUser(user);
+
+        const { apiSecretHash, ...rest } = user
         return {
             ...rest,
             apiSecret: ''
@@ -81,7 +109,10 @@ export class UserService implements OnModuleInit {
             apiSecretHash: hashedSecret, // 🔹 Store hashed secret
         };
 
-        const {apiSecretHash, ...rest} = await this.userRepo.save(newRecord);
+        const user = await this.userRepo.save(newRecord);
+        await this.cacheUser(user);
+
+        const { apiSecretHash, ...rest } = user;
         return {
             ...rest,
             apiSecret: newApiSecret
@@ -89,6 +120,11 @@ export class UserService implements OnModuleInit {
     }
 
     async removeUser(params: RemoveUserDto): Promise<boolean> {
-        return (await this.userRepo.delete(params)).affected > 0;
+        const deleteResult = await this.userRepo.delete(params);
+        if (deleteResult.affected > 0) {
+            await this.redis.del(this.userRedisKey(params.username)); // Remove cached user
+            return true;
+        }
+        return false;
     }
 }
