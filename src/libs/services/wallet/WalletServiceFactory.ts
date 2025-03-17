@@ -14,6 +14,7 @@ export class WalletServiceFactory {
             case "ancient8":
             case "metis":
             case "arbitrum":
+            case "zksync":
                 return new EVMWalletService(chain, this.walletRepo);
             default: {
                 throw new NotFoundException("Chain is not supported")
