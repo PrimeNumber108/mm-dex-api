@@ -15,6 +15,8 @@ import { BadRequestException } from "@nestjs/common";
 import { PairService } from "src/modules/pair/pair.service";
 import { CreateBatchedSwapOrderDto, CreateSwapOrderDto, SwapOrderResponseDto } from "src/modules/order/dtos/swap-order.dto";
 import { IEVMSwapper } from "../IEVMSwapper";
+import { PairResponseDto } from "src/modules/pair/pair-dto";
+import { Web3Helper } from "../../web3";
 
 export abstract class BaseEVMOrderService extends BaseOrderService {
 
@@ -242,10 +244,19 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         })
 
         const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
-        const pair = await this.pairService.assertKnownPair({
-            protocol: params.protocol, chain: params.chain,
-            token0, token1
-        })
+        let pair: PairResponseDto;
+        try {
+            pair = await this.pairService.assertKnownPair({
+                protocol: params.protocol, chain: params.chain,
+                token0, token1
+            })
+        } catch (err) {
+            pair = await this.pairService.assertKnownPair({
+                protocol: params.protocol, chain: params.chain,
+                token0: Web3Helper.getERC20Representation(params.chain, token0),
+                token1: Web3Helper.getERC20Representation(params.chain, token1)
+            })
+        }
         const wallet = await this.getSrcWallet(params);
 
         const swapper = this.getSwapper(params.protocol);
