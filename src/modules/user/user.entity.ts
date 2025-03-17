@@ -5,7 +5,7 @@ import { Column, Entity, Index } from 'typeorm';
 export enum UserRole {
     OPERATOR = 'OPERATOR',
     ADMIN = 'ADMIN',
-    GUESS = 'GUESS'
+    GUEST = 'GUEST'
 }
 @Entity()
 @Index(['username'], { unique: true })
