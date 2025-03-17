@@ -10,6 +10,7 @@ import { PairService } from "src/modules/pair/pair.service";
 import { A8OrderService } from "./impl/a8/A8OrderService";
 import { MetisOrderService } from "./impl/metis/MetisOrderService";
 import { ARBOrderService } from "./impl/arb/ArbOrderService";
+import { ZksyncOrderService } from "./impl/zksync/ZksyncOrderService";
 
 export class OrderServiceFactory {
     constructor(
@@ -38,6 +39,10 @@ export class OrderServiceFactory {
                 )
             case "arbitrum":
                 return new ARBOrderService(
+                    this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
+                )
+            case "zksync":
+                return new ZksyncOrderService(
                     this.transferRepo, this.withdrawalRepo, this.swapRepo, this.tokenService, this.pairService, this.walletService
                 )
             default: {

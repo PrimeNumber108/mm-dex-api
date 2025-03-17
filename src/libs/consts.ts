@@ -35,6 +35,13 @@ export const NetworkConfigs: {[key: string]: NetworkConfig} = {
     rpc: env.web3.arbRpc,
     currency: "ETH",
     wrappedNative: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+  },
+  "zksync": {
+    chainId: 324,
+    name: "zksync",
+    rpc: env.web3.zksyncRpc,
+    currency: "ETH",
+    wrappedNative: "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
   }
 }
 

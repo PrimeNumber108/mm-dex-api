@@ -9,6 +9,7 @@ export interface IEVMSwapper {
         amountOutMin: bigint,
         recipient?: string,
         fee?: bigint,
+        pair?: string,
     ): Promise<string>;
 
     prepareForSwap(
@@ -20,5 +21,6 @@ export interface IEVMSwapper {
         gasPrice: bigint,
         recipient?: string,
         fee?: bigint,
+        pair?: string
     ): Promise<string>;
 }

@@ -258,7 +258,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 parseUnits(params.amountIn, tokenIn.decimals),
                 parseUnits(params.amountOutMin, tokenOut.decimals),
                 recipient,
-                BigInt(pair.fee)
+                BigInt(pair.fee),
+                pair.pair
             );
 
             const creationDto: CreateSwapOrderDto = {
@@ -302,7 +303,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 amountOutMin,
                 gasPrice,
                 recipient,
-                BigInt(pair.fee)
+                BigInt(pair.fee),
+                pair.pair
             );
         }));
 

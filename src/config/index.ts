@@ -15,6 +15,7 @@ const envVarsSchema = Joi.object()
     BERA_RPC: Joi.string().required(),
     A8_RPC: Joi.string().required(),
     METIS_RPC: Joi.string().required(),
+    ZKSYNC_RPC: Joi.string().required(),
 
     PASSPHRASE: Joi.string().required(),
 
@@ -58,6 +59,7 @@ export const env = {
     arbRpc: envVars.ARB_RPC,
     beraRpc: envVars.BERA_RPC,
     a8Rpc: envVars.A8_RPC,
-    metisRpc: envVars.METIS_RPC
+    metisRpc: envVars.METIS_RPC,
+    zksyncRpc: envVars.ZKSYNC_RPC
   },
 };
