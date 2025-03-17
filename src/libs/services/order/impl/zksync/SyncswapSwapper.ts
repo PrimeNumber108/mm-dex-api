@@ -23,9 +23,9 @@ export class SyncswapSwapper implements IEVMSwapper {
         if (!isTokenInNative)
             await EVMTokenHelper.approveIfNeeded(wallet, ZksyncConsts.SYNCSWAP_ROUTER, tokenIn, amountIn);
         const sc = SyncswapRouter__factory.connect(ZksyncConsts.SYNCSWAP_ROUTER, wallet);
-
+        const tokenInERC20 = Web3Helper.getERC20Representation('zksync', tokenIn);
         const swapData = ethers.AbiCoder.defaultAbiCoder().encode(["address", "address", "uint8"],
-            [Web3Helper.getERC20Representation('zksync', tokenIn), wallet.address, 1]
+            [tokenInERC20, wallet.address, 1]
         );
         const swapSteps = [{
             pool: pair,
@@ -36,7 +36,7 @@ export class SyncswapSwapper implements IEVMSwapper {
         const paths = [
             {
                 steps: swapSteps,
-                tokenIn,
+                tokenIn: tokenInERC20,
                 amountIn
             }
         ]
@@ -69,8 +69,9 @@ export class SyncswapSwapper implements IEVMSwapper {
 
         const nonce = await wallet.getNonce();
 
+        const tokenInERC20 = Web3Helper.getERC20Representation('zksync', tokenIn);
         const swapData = ethers.AbiCoder.defaultAbiCoder().encode(["address", "address", "uint8"],
-            [Web3Helper.getERC20Representation('zksync', tokenIn), wallet.address, 1]
+            [tokenInERC20, wallet.address, 1]
         );
         const swapSteps = [{
             pool: pair,
@@ -81,7 +82,7 @@ export class SyncswapSwapper implements IEVMSwapper {
         const paths = [
             {
                 steps: swapSteps,
-                tokenIn,
+                tokenIn: tokenInERC20,
                 amountIn
             }
         ]
