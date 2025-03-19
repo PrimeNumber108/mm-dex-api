@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 import { TransferOrder } from "src/modules/order/entities/transfer-order.entity";
 import { WithdrawalOrder } from "src/modules/order/entities/withdrawal-order.entity";
 import { SwapOrder } from "src/modules/order/entities/swap-order.entity";
-import { ERC20__factory } from "src/contracts";
+import { ERC20__factory } from "src/contracts/factories";
 import { TokenService } from "src/modules/token/token.service";
 import { BadRequestException } from "@nestjs/common";
 import { PairService } from "src/modules/pair/pair.service";

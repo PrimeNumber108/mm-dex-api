@@ -1,5 +1,5 @@
 import { ContractTransactionResponse, TransactionRequest, Wallet, ZeroAddress } from "ethers";
-import { CamelotRouter__factory } from "src/contracts";
+import { CamelotRouter__factory } from "src/contracts/factories";
 import { ARBConsts } from "./consts";
 import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";

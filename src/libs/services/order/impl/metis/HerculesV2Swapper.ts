@@ -3,7 +3,7 @@ import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { Web3Helper } from "src/libs/services/web3";
 import { MetisConsts } from "./consts";
-import { HerculesV2Router__factory } from "src/contracts";
+import { HerculesV2Router__factory } from "src/contracts/factories";
 import { IEVMSwapper } from "../../IEVMSwapper";
 
 export class HerculesV2Swapper implements IEVMSwapper {

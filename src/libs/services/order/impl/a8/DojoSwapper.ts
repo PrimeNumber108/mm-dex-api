@@ -2,7 +2,7 @@ import { ContractTransactionResponse, TransactionRequest, Wallet } from "ethers"
 import { NATIVE, NetworkConfigs } from "src/libs/consts";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { A8Consts } from "./consts";
-import { DojoRouter__factory } from "src/contracts";
+import { DojoRouter__factory } from "src/contracts/factories";
 import { Web3Helper } from "src/libs/services/web3";
 import { IEVMSwapper } from "../../IEVMSwapper";
 

@@ -1,6 +1,6 @@
 import { Wallet } from "ethers";
 
-import { ERC20__factory } from "src/contracts";
+import { ERC20__factory } from "src/contracts/factories";
 
 export namespace EVMTokenHelper {
   export async function approveToken(

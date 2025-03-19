@@ -1,5 +1,5 @@
 import { TransactionRequest, Wallet } from "ethers";
-import { UniswapV2Router__factory } from "src/contracts";
+import { UniswapV2Router__factory } from "src/contracts/factories";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { BerachainConsts } from "./consts";
 import { NATIVE, NetworkConfigs } from "src/libs/consts";

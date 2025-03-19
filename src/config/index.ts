@@ -19,11 +19,12 @@ const envVarsSchema = Joi.object()
 
     PASSPHRASE: Joi.string().required(),
 
-    POSTGRES_USER: Joi.string().required(),
-    POSTGRES_PASSWORD: Joi.string().required(),
-    POSTGRES_HOST: Joi.string().default("localhost"),
+    MYSQL_USER: Joi.string().required(),
+    MYSQL_PASSWORD: Joi.string().required(),
+    MYSQL_HOST: Joi.string().default("localhost"),
 
-    REDIS_PASSWORD: Joi.string().required(),
+    // REDIS_PASSWORD: Joi.string().required(),
+    REDIS_PASSWORD: Joi.string().allow("").required(),
     REDIS_HOST: Joi.string().default("localhost"),
 
     ROOT_ADMIN_API_SECRET: Joi.string().required(),
@@ -46,10 +47,10 @@ export const env = {
     passphrase: envVars.PASSPHRASE,
     rootAdminApiSecret: envVars.ROOT_ADMIN_API_SECRET,
   },
-  postgres: {
-    username: envVars.POSTGRES_USER,
-    password: envVars.POSTGRES_PASSWORD,
-    host: envVars.POSTGRES_HOST,
+  mysql: {
+    username: envVars.MYSQL_USER,
+    password: envVars.MYSQL_PASSWORD,
+    host: envVars.MYSQL_HOST,
   },
   redis: {
     host: envVars.REDIS_HOST,

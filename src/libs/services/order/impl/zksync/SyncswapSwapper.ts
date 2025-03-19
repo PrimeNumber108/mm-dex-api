@@ -4,7 +4,7 @@ import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { Web3Helper } from "src/libs/services/web3";
 import { IEVMSwapper } from "../../IEVMSwapper";
 import { ZksyncConsts } from "./consts";
-import { SyncswapRouter__factory } from "src/contracts";
+import { SyncswapRouter__factory } from "src/contracts/factories";
 
 export class SyncswapSwapper implements IEVMSwapper {
     async executeSwap(

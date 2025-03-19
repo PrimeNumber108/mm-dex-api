@@ -1,5 +1,5 @@
 import { TransactionRequest, Wallet } from "ethers";
-import { HoldsoRouter__factory } from "src/contracts";
+import { HoldsoRouter__factory } from "src/contracts/factories";
 import { ISwapRouter } from "src/contracts/HoldsoRouter";
 import { EVMTokenHelper } from "src/libs/evm/token-helper";
 import { BerachainConsts } from "./consts";
