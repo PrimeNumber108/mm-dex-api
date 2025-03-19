@@ -6,6 +6,7 @@ import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import * as morgan from 'morgan';
+import { join } from 'path';
 
 import { env } from './config';
 import { AppModule } from './modules/app.module';
@@ -73,6 +74,7 @@ async function bootstrap() {
   await app.listen(env.port, () =>
     logger.warn(`> Listening App on port ${env.port}`),
   );
+
 }
 
 bootstrap();

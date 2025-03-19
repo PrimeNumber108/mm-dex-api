@@ -11,11 +11,20 @@ export namespace TypeormTransformers {
     }
   }
 
-  export const stringArrayTransformer: ValueTransformer = {
-    to: (value: string[]) => (value ? value.join(',') : ''),
-    from: (value: string) => (value ? value.split(',') : []),
-  };
+  // export const stringArrayTransformer: ValueTransformer = {
+  //   to: (value: string[]) => (value ? value.join(',') : ''),
+  //   from: (value: string) => (value ? value.split(',') : []),
+  // };
 
+
+  export const stringArrayTransformer: ValueTransformer = {
+    to: (value: string[]) => (value && Array.isArray(value) ? value.join(',') : ''),
+    from: (value: string | null) => {
+      // Ensure value is a string before attempting to split it
+      return typeof value === 'string' ? value.split(',') : [];
+    },
+  };
+  
   export const timestampTransformer: ValueTransformer = {
     to: (value: number | Date) => (value instanceof Date ? value : new Date(value)), // Ensure Date for DB
     from: (value: Date) => value?.getTime() ?? null, // Convert DB Date to milliseconds

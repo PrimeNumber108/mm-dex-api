@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/libs/base/base-entity';
 import { TypeormTransformers } from 'src/libs/utils/transformers';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index,PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRole {
     OPERATOR = 'OPERATOR',
@@ -16,13 +16,16 @@ export class User extends BaseEntity {
     @Column({ nullable: false })
     apiSecretHash: string;
 
-    @Column({ nullable: false, enum: UserRole })
+    @Column({  
+        type: 'enum',
+        nullable: false, 
+        enum: UserRole 
+    })
     role: UserRole;
 
     @Column({
         type: 'text',  // Store as TEXT in the database
         nullable: false,
-        default: '',
         transformer: TypeormTransformers.stringArrayTransformer,  // Use our transformer
     })
     allowedClusters: string[];

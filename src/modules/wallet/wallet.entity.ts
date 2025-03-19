@@ -22,8 +22,7 @@ export class Wallet extends BaseEntity {
   cluster: string;
   @Column({
     type: 'text',  // Store as TEXT in the database
-    nullable: false,
-    default: '',
+    nullable: true,
     transformer: TypeormTransformers.stringArrayTransformer,  // Use our transformer
   })
   chains: string[];
