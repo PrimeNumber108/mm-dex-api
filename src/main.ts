@@ -52,7 +52,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('MM Executor API')
+      .setTitle('MM Dex API')
       .setVersion('0.0.1')
       .addApiKey(
         { type: 'apiKey', name: 'x-api-secret', in: 'header' },
