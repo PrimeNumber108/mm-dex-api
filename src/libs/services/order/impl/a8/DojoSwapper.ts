@@ -28,8 +28,8 @@ export class DojoSwapper implements IEVMSwapper {
                 amountIn,
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('ancient8', tokenIn),
+                    Web3Helper.getERC20Representation('ancient8', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 Date.now() + 60000,
@@ -38,8 +38,8 @@ export class DojoSwapper implements IEVMSwapper {
             tx = await sc.swapExactETHForTokens(
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('ancient8', tokenIn),
+                    Web3Helper.getERC20Representation('ancient8', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 Date.now() + 60000,
@@ -53,8 +53,8 @@ export class DojoSwapper implements IEVMSwapper {
                 amountIn,
                 amountOutMin,
                 [
-                    Web3Helper.getERC20Representation('a8', tokenIn),
-                    Web3Helper.getERC20Representation('a8', tokenOut)
+                    Web3Helper.getERC20Representation('ancient8', tokenIn),
+                    Web3Helper.getERC20Representation('ancient8', tokenOut)
                 ],
                 recipient ?? wallet.address,
                 Date.now() + 60000,
@@ -89,8 +89,8 @@ export class DojoSwapper implements IEVMSwapper {
                     amountIn,
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('ancient8', tokenIn),
+                        Web3Helper.getERC20Representation('ancient8', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     Date.now() + 60000
@@ -102,8 +102,8 @@ export class DojoSwapper implements IEVMSwapper {
                 [
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('ancient8', tokenIn),
+                        Web3Helper.getERC20Representation('ancient8', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     Date.now() + 60000
@@ -116,8 +116,8 @@ export class DojoSwapper implements IEVMSwapper {
                     amountIn,
                     amountOutMin,
                     [
-                        Web3Helper.getERC20Representation('a8', tokenIn),
-                        Web3Helper.getERC20Representation('a8', tokenOut)
+                        Web3Helper.getERC20Representation('ancient8', tokenIn),
+                        Web3Helper.getERC20Representation('ancient8', tokenOut)
                     ],
                     recipient ?? wallet.address,
                     Date.now() + 60000

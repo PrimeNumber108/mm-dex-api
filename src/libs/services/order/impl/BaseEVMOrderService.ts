@@ -246,11 +246,15 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
         let pair: PairResponseDto;
         try {
+            const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
             pair = await this.pairService.assertKnownPair({
                 protocol: params.protocol, chain: params.chain,
                 token0, token1
             })
         } catch (err) {
+            let token0 = Web3Helper.getERC20Representation(params.chain, tokenIn.address);
+            let token1 = Web3Helper.getERC20Representation(params.chain, tokenOut.address);
+            [token0, token1] = BigInt(token0) < BigInt(token1) ? [token0, token1] : [token1, token0];
             pair = await this.pairService.assertKnownPair({
                 protocol: params.protocol, chain: params.chain,
                 token0: Web3Helper.getERC20Representation(params.chain, token0),

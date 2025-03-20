@@ -4,7 +4,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InjectRedis, RedisModule } from '@nestjs-modules/ioredis';
 import { env } from 'src/config';
-import { HealthCheckModule } from './health-check/health-check.module';
 import dataSource from 'src/libs/typeorm.config';
 import Redis from 'ioredis';
 import { UserModule } from './user/user.module';
@@ -28,7 +27,6 @@ import { PairModule } from './pair/pair.module';
         password: env.redis.password
       },
     }),
-    HealthCheckModule,
     UserModule,
     TokenModule,
     PairModule,

@@ -28,6 +28,7 @@ const envVarsSchema = Joi.object()
     REDIS_HOST: Joi.string().default("localhost"),
 
     ROOT_ADMIN_API_SECRET: Joi.string().required(),
+    TRON_BASE_URL: Joi.string().default('https://api.trongrid.io')
   })
   .unknown();
 
@@ -64,3 +65,6 @@ export const env = {
     zksyncRpc: envVars.ZKSYNC_RPC
   },
 };
+
+
+
