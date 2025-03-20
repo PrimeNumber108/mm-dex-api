@@ -19,8 +19,6 @@
     "migration:up": "npm run typeorm:cli migration:run -- -d src/libs/typeorm.config.ts",
     "migration:down": "npm run typeorm:cli -- -d src/libs/typeorm.config.ts migration:revert",
     "typechain:gen": "typechain --target ethers-v6 --out-dir src/contracts src/abis/**/*.json"
-
-    
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",
@@ -40,7 +38,7 @@
     "@typechain/ethers-v6": "^0.5.1",
     "@types/multer": "^1.4.12",
     "@types/supertest": "^6.0.2",
-    "axios": "^1.7.7",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bignumber.js": "^9.1.2",
     "class-transformer": "^0.5.1",

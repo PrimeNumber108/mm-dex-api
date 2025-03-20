@@ -6,6 +6,10 @@ export const isLocal = process.env.NODE_ENV === 'local';
 
 const envVarsSchema = Joi.object()
   .keys({
+    EXECUTOR_ENDPOINT: Joi.string().default('https://dex-mm.nysm.work/api'),
+    EXECUTOR_USERNAME: Joi.string().required(),
+    EXECUTOR_SECRET: Joi.string().required(),
+    EXECUTOR_PASSPHRASE: Joi.string().required(),
     NODE_ENV: Joi.string()
       .valid('production', 'development', 'test', 'local', 'staging')
       .required(),
@@ -63,6 +67,12 @@ export const env = {
     a8Rpc: envVars.A8_RPC,
     metisRpc: envVars.METIS_RPC,
     zksyncRpc: envVars.ZKSYNC_RPC
+  },
+  executor: {
+    passphrase: envVars.EXECUTOR_PASSPHRASE,
+    endPoint: envVars.EXECUTOR_ENDPOINT,
+    apiSecret: envVars.EXECUTOR_SECRET,
+    apiUsername: envVars.EXECUTOR_USERNAME
   },
 };
 
