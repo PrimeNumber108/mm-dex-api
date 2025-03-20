@@ -13,6 +13,12 @@ export class Wallet extends BaseEntity {
   @Column({ nullable: false })
   address: string;
 
+  @Column({ nullable: false })
+  accoundId: string;
+
+  @Column({ nullable: false })
+  symbol: string;
+
   @Column({
     nullable: false, transformer: TypeormTransformers.encryptionTransformer
   })
