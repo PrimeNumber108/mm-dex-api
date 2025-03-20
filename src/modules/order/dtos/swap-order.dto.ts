@@ -25,7 +25,7 @@ export class CreateSwapOrderDto extends CreateBaseOrderDto {
     tokenOut: string;
 
     @ApiProperty({ type: String })
-    recipient: string;
+    orderSide: string;
 
     @ApiProperty({ type: String })
     protocol: string;

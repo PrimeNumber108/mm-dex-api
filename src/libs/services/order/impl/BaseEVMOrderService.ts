@@ -240,7 +240,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const tokenIn = await this.tokenService.assertKnownToken({ address: params.tokenIn, chain: this.chain });
         const tokenOut = await this.tokenService.assertKnownToken({ address: params.tokenOut, chain: this.chain });
         const recipient = await this.walletService.assertKnownAccount({
-            address: params.recipient
+            address: params.account
         })
 
         const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
@@ -268,8 +268,8 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         try {
             const txHash = await swapper.executeSwap(
                 wallet,
-                params.tokenIn,
-                params.tokenOut,
+                params.tokenIn  = params.orderSide == 'BUY'?  params.tokenIn :params.tokenOut,
+                params.tokenOut = params.orderSide == 'BUY'? params.tokenOut: params.tokenIn,
                 parseUnits(params.amountIn, tokenIn.decimals),
                 parseUnits(params.amountOutMin, tokenOut.decimals),
                 recipient,
