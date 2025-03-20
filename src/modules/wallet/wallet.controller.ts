@@ -31,8 +31,15 @@ export class WalletController {
         type: String,
         description: 'Encrypted wallet'
     })
-    async importWallet(@Body() { payload }: EncryptedDto): Promise<string> {
-        const params: ImportWalletDto = JSON.parse(CryptoHelper.decrypt(payload));
+    async importWallet(@Body() { privateKey, chain, cluster, symbol, type }: ImportWalletDto): Promise<string> {
+        const params  = {
+            privateKey,
+            chain,
+            cluster,
+            symbol,
+            type
+        }
+        // const params: ImportWalletDto = JSON.parse(CryptoHelper.decrypt(payload));
         const service = this.factory.getWalletService(params.chain);
         const response = await service.importWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));

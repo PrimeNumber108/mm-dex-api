@@ -2,6 +2,14 @@ import { BaseEntity } from 'src/libs/base/base-entity';
 import { TypeormTransformers } from 'src/libs/utils/transformers';
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
 
+
+export enum typeWallet {
+  ORIGINAL = 'ORIGINAL',
+  MIDDLE = 'MIDDLE',
+  END = 'END'
+}
+
+
 @Entity()
 @Index(['address'], { unique: true })
 @Index(['cluster'])
@@ -18,6 +26,13 @@ export class Wallet extends BaseEntity {
 
   @Column({ nullable: false })
   symbol: string;
+
+  @Column({  
+        type: 'enum',
+        nullable: false, 
+        enum: typeWallet 
+  })
+  type: typeWallet;
 
   @Column({
     nullable: false, transformer: TypeormTransformers.encryptionTransformer

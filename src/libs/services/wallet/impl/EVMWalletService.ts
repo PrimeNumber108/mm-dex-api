@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { BaseWalletService } from "./BaseWalletService";
-import { Wallet } from "src/modules/wallet/wallet.entity";
+import { Wallet, typeWallet} from "src/modules/wallet/wallet.entity";
 import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { ethers } from "ethers";
@@ -50,22 +50,18 @@ export class EVMWalletService extends BaseWalletService {
             index = cluster.length;
         }
 
-        const raw = {
-            privateKey: params.privateKey,
-            cluster: 'zksync-tresury-keys',
-            chain: 'zksync'
-        };
     
-        const encrypedKey = ExecutorSDK.encryptPayload(raw);
-        console.log('encrypedKey:: ',encrypedKey)
         const record = this.walletRepo.create({
             address: wallet.address,
-            privateKey: encrypedKey, //wallet.privateKey
+            privateKey: wallet.privateKey, //wallet.privateKey
             cluster: params.cluster,
             chains: [params.chain],
+            type: typeWallet[params.type as keyof typeof typeWallet],
+            accoundId: params.chain+params.symbol+params.type+params.chain.length,
+            symbol: params.symbol,
             index
         })
-        
+
         return await this.walletRepo.save(record);
     }
     async generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto> {
