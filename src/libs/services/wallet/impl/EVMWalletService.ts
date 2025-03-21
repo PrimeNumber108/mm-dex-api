@@ -4,7 +4,7 @@ import { Wallet, typeWallet} from "src/modules/wallet/wallet.entity";
 import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { ethers } from "ethers";
-import {ExecutorSDK} from 'src/utils/crypto'
+import {CryptoHelper} from 'src/utils/crypto'
 
 export class EVMWalletService extends BaseWalletService {
     constructor(
@@ -50,7 +50,9 @@ export class EVMWalletService extends BaseWalletService {
             index = cluster.length;
         }
 
-    
+        const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
+
+
         const record = this.walletRepo.create({
             address: wallet.address,
             privateKey: wallet.privateKey, //wallet.privateKey

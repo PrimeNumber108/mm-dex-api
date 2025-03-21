@@ -35,12 +35,14 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         this.provider = new JsonRpcProvider(NetworkConfigs[this.chain].rpc);
     }
 
+
     async getSrcWallet(params: CreateBaseOrderDto) {
         const walletDto = await this.walletService.assertWalletForExecution({
             address: params.account,
         });
         return new Wallet(walletDto.privateKey, this.provider);
     }
+
 
     async estimateTransferGas(wallet: Wallet, token: string) {
         let tx: TransactionRequest;
@@ -246,12 +248,14 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
         let pair: PairResponseDto;
         try {
+            //Get from checked DB
             const [token0, token1] = BigInt(tokenIn.address) < BigInt(tokenOut.address) ? [tokenIn.address, tokenOut.address] : [tokenOut.address, tokenIn.address];
             pair = await this.pairService.assertKnownPair({
                 protocol: params.protocol, chain: params.chain,
                 token0, token1
             })
         } catch (err) {
+            //Get Raw input Token
             let token0 = Web3Helper.getERC20Representation(params.chain, tokenIn.address);
             let token1 = Web3Helper.getERC20Representation(params.chain, tokenOut.address);
             [token0, token1] = BigInt(token0) < BigInt(token1) ? [token0, token1] : [token1, token0];
@@ -262,7 +266,6 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
             })
         }
         const wallet = await this.getSrcWallet(params);
-
         const swapper = this.getSwapper(params.protocol);
 
         try {

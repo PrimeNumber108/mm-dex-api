@@ -1,24 +1,18 @@
-import axios from "axios";
-import * as CryptoJS from "crypto-js";
-import { env } from "src/config";
+import EC from 'elliptic';
+const ec = new EC.ec('secp256k1'); // Use secp256k1 (Bitcoin, Ethereum standard) or secp256r1
 
-export namespace ExecutorSDK {
-    const passphrase = env.executor.passphrase;
-    export const client = axios.create({
-        baseURL: env.executor.endPoint,
-        headers: {
-            'x-api-secret': env.executor.apiSecret,
-            'username': env.executor.apiUsername,
-            'Accept': 'application/json'
-        }
-    });
+export class CryptoHelper {
+    private static keyPair = ec.genKeyPair(); // Generate a key pair (can be pre-generated & stored securely)
 
-    export const encryptPayload = (raw: any) => {
-        return CryptoJS.AES.encrypt(JSON.stringify(raw), passphrase).toString();
+    static encrypt(data: string): string {
+        const pubKey = this.keyPair.getPublic('hex');
+        const encrypted = ec.encrypt(pubKey, Buffer.from(data));
+        return JSON.stringify(encrypted);
     }
-    export const decryptPayload = (encrypted: string) => {
-        const bytes = (CryptoJS.AES.decrypt(encrypted, passphrase))
-        const originalText = bytes.toString(CryptoJS.enc.Utf8);
-        return JSON.parse(originalText);
+
+    static decrypt(encrypted: string): string {
+        const privKey = this.keyPair.getPrivate('hex');
+        const decrypted = ec.decrypt(privKey, JSON.parse(encrypted));
+        return decrypted.toString();
     }
 }

@@ -55,7 +55,6 @@ export class WalletController {
     async importCluster(
         @Body() { payload }: EncryptedDto
     ): Promise<string> {
-
         const params: ImportClusterDto = JSON.parse(CryptoHelper.decrypt(payload));
         const service = this.factory.getWalletService(params.chain);
         const response = await service.importCluster(params);
