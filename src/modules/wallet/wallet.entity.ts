@@ -30,9 +30,10 @@ export class Wallet extends BaseEntity {
   @Column({  
         type: 'enum',
         nullable: false, 
-        enum: typeWallet 
+        enum: typeWallet ,
   })
   type: typeWallet;
+  // nullable: false, transformer: TypeormTransformers.encryptionTransformer
 
   @Column({
     nullable: false, transformer: TypeormTransformers.encryptionTransformer
