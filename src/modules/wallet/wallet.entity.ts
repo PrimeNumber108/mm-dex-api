@@ -42,6 +42,7 @@ export class Wallet extends BaseEntity {
 
   @Column({ nullable: false, default: 'no' })
   cluster: string;
+  
   @Column({
     type: 'text',  // Store as TEXT in the database
     nullable: true,

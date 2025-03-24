@@ -10,6 +10,8 @@ import { EncryptedDto, GenerateClusterDto, GenerateWalletDto, ImportClusterDto, 
 import { CryptoHelper } from "src/libs/utils/crypto-helper";
 import { WalletResponseDto } from "./dtos/wallet.dto";
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-wallet.dto";
+import {CryptoFEHelper} from "../utils/crypto"
+import { env } from 'src/config';
 
 @ApiTags('Wallet')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
@@ -32,6 +34,9 @@ export class WalletController {
         description: 'Encrypted wallet'
     })
     async importWallet(@Body() { privateKey, chain, cluster, symbol, type }: ImportWalletDto): Promise<string> {
+        // const keyPair = await CryptoFEHelper.generateKeypair()
+        // console.log("X25519 Public Key:", keyPair.publicKey)
+        // console.log("X25519 Private Key:", keyPair.privateKey)
         const params  = {
             privateKey,
             chain,
@@ -39,7 +44,11 @@ export class WalletController {
             symbol,
             type
         }
-        // const params: ImportWalletDto = JSON.parse(CryptoHelper.decrypt(payload));
+
+        const encryptedPrivateKey = await CryptoFEHelper.encryptMessage(privateKey, env.keys.publicKey);
+        params.privateKey = encryptedPrivateKey
+       
+
         const service = this.factory.getWalletService(params.chain);
         const response = await service.importWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));

@@ -51,6 +51,8 @@ export const env = {
   keys: {
     passphrase: envVars.PASSPHRASE,
     rootAdminApiSecret: envVars.ROOT_ADMIN_API_SECRET,
+    publicKey: envVars.PUBLIC_KEY,
+    privateKey: envVars.PRIVATE_KEY
   },
   mysql: {
     username: envVars.MYSQL_USER,

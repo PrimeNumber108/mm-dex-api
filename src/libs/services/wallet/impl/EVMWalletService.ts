@@ -4,7 +4,8 @@ import { Wallet, typeWallet} from "src/modules/wallet/wallet.entity";
 import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { ethers } from "ethers";
-import {CryptoHelper} from 'src/libs/utils/crypto-helper'
+import {CryptoFEHelper} from "src/modules/utils/crypto"
+import { env } from 'src/config';
 
 export class EVMWalletService extends BaseWalletService {
     constructor(
@@ -18,11 +19,11 @@ export class EVMWalletService extends BaseWalletService {
         const records = [];
         for (let i = 0; i < params.numOfKeys; i++) {
             const wallet = ethers.Wallet.createRandom();
-            const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
+            // const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
 
             records.push(this.walletRepo.create({
                 address: wallet.address,
-                privateKey: encryptedPrivateKey,
+                privateKey: wallet.privateKey,
                 cluster: params.cluster,
                 index: i,
                 chains: [params.chain]
@@ -34,11 +35,11 @@ export class EVMWalletService extends BaseWalletService {
         const records = [];
         for (let i = 0; i < params.privateKeys.length; i++) {
             const wallet = new ethers.Wallet(params.privateKeys[i]);
-            const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
+            // const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
 
             records.push(this.walletRepo.create({
                 address: wallet.address,
-                privateKey: encryptedPrivateKey,
+                privateKey: wallet.privateKey,
                 cluster: params.cluster,
                 index: i,
                 chains: [params.chain]
@@ -47,19 +48,22 @@ export class EVMWalletService extends BaseWalletService {
         return await this.walletRepo.save(records);
     }
     async importWallet(params: ImportWalletDto): Promise<WalletPrivateResponseDto> {
-        const wallet = new ethers.Wallet(params.privateKey);
+        const encryptedKey = params.privateKey
+        const decryptedKey = await CryptoFEHelper.decryptMessage(encryptedKey, env.keys.privateKey, env.keys.publicKey);
+
+        const wallet = new ethers.Wallet(decryptedKey);
         let index = 0;
         if (params.cluster) {
             const cluster = await this.getCluster({ cluster: params.cluster });
             index = cluster.length;
         }
 
-        const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
+        // const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
 
 
         const record = this.walletRepo.create({
             address: wallet.address,
-            privateKey: encryptedPrivateKey, //wallet.privateKey
+            privateKey: wallet.privateKey, //wallet.privateKey
             cluster: params.cluster,
             chains: [params.chain],
             type: typeWallet[params.type as keyof typeof typeWallet],
@@ -78,11 +82,11 @@ export class EVMWalletService extends BaseWalletService {
             index = cluster.length;
         }
 
-        const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
+        // const encryptedPrivateKey = CryptoHelper.encrypt(wallet.privateKey);
 
         const record = this.walletRepo.create({
             address: wallet.address,
-            privateKey: encryptedPrivateKey,
+            privateKey: wallet.privateKey,
             cluster: params.cluster,
             chains: [params.chain],
             index

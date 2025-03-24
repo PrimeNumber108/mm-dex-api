@@ -335,6 +335,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 tokenOut: params.tokenOut,
                 recipient: params.items[idx].recipient,
                 protocol: params.protocol,
+                orderSide: params.orderSide,
                 amountIn: params.items[idx].amountIn,
                 amountOutMin: params.items[idx].amountOutMin,
                 username: params.username,
