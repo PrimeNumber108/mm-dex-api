@@ -52,8 +52,6 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('MM Dex API')
-      .setVersion('0.0.1')
       .addApiKey(
         { type: 'apiKey', name: 'x-api-secret', in: 'header' },
         'x-api-secret'
@@ -68,6 +66,10 @@ async function bootstrap() {
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('swagger', app, swaggerDocument, {
       jsonDocumentUrl: 'swagger/json',
+      customCss: `
+      .swagger-ui .topbar { display: none !important; } /* Hide Swagger UI title */
+      .swagger-ui .swagger-ui-footer { display: none !important; } /* Hide "Supported by Swagger" */
+    `
     });
   }
 

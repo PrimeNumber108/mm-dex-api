@@ -193,6 +193,7 @@ export class WalletController {
         type: [WalletResponseDto],
         description: 'All wallets'
     })
+
     async poll(): Promise<WalletResponseDto[]> {
         const service = this.factory.getWalletService("berachain");
         return await service.poll();
