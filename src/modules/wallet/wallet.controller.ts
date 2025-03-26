@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Wallet } from "./wallet.entity";
 import { Repository } from "typeorm";
 import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFactory";
-import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags, ApiQuery } from "@nestjs/swagger";
 import { Roles } from "src/decorators/roles.decorator";
 import { UserRole } from "../user/user.entity";
 import { EncryptedDto, GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto, RenameClusterDto, SupportChainsDto } from "./dtos/upsert-wallet.dto";
@@ -12,6 +12,7 @@ import { WalletResponseDto } from "./dtos/wallet.dto";
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-wallet.dto";
 import {CryptoFEHelper} from "../utils/crypto"
 import { env } from 'src/config';
+
 
 @ApiTags('Wallet')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
@@ -25,6 +26,22 @@ export class WalletController {
     ) {
         this.factory = new WalletServiceFactory(walletRepo);
     }
+
+    @Get('/list-wallet')
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'pageSize', required: false, type: Number, example: 10 })
+    @ApiQuery({ name: 'address', required: false, type: String, example: '0x123...' })
+    @ApiResponse({ status: 200, type: [Wallet], description: 'List of wallets with pagination and filtering' })
+    async getWallets(
+        @Query('page') page: number = 1,
+        @Query('pageSize') pageSize: number = 10,
+        @Query('address') address?: string
+    ): Promise<{ total: number; wallets: Wallet[] }> {
+        const service = this.factory.getWalletService("berachain");
+        const response = await service.getWallets(page, pageSize, address);
+        return response;
+    }
+
 
     @Post('/import-wallet')
     @Roles(UserRole.ADMIN)
@@ -48,7 +65,6 @@ export class WalletController {
         const encryptedPrivateKey = await CryptoFEHelper.encryptMessage(privateKey, env.keys.publicKey);
         params.privateKey = encryptedPrivateKey
        
-
         const service = this.factory.getWalletService(params.chain);
         const response = await service.importWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));

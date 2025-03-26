@@ -52,6 +52,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
+    .addServer('http://localhost:3000')  // 👈 Force Swagger to use the backend URL
       .addApiKey(
         { type: 'apiKey', name: 'x-api-secret', in: 'header' },
         'x-api-secret'

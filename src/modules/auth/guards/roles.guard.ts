@@ -17,6 +17,7 @@ export class RolesGuard {
     private readonly walletRepo: Repository<Wallet>
   ) {}
 
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
       context.getHandler(),

@@ -74,6 +74,27 @@ export class EVMWalletService extends BaseWalletService {
 
         return await this.walletRepo.save(record);
     }
+
+    async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; wallets: Wallet[] }> {
+        const query = this.walletRepo.createQueryBuilder('wallet');
+
+        // Apply filtering if address is provided
+        if (address) {
+            query.where('wallet.address = :address', { address });
+        }
+
+        // Get total count for pagination
+        const total = await query.getCount();
+
+        // Apply pagination
+        const wallets = await query
+            .orderBy('wallet.index', 'ASC')
+            .skip((page - 1) * pageSize)
+            .take(pageSize)
+            .getMany();
+
+        return { total, wallets };
+    }
     async generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto> {
         const wallet = ethers.Wallet.createRandom();
         let index = 0;
