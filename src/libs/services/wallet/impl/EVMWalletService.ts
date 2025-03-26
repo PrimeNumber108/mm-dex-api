@@ -75,7 +75,7 @@ export class EVMWalletService extends BaseWalletService {
         return await this.walletRepo.save(record);
     }
 
-    async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; wallets: Wallet[] }> {
+    async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; data: Wallet[]  }> {
         const query = this.walletRepo.createQueryBuilder('wallet');
 
         // Apply filtering if address is provided
@@ -93,7 +93,7 @@ export class EVMWalletService extends BaseWalletService {
             .take(pageSize)
             .getMany();
 
-        return { total, wallets };
+        return { total, data: wallets };
     }
     async generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto> {
         const wallet = ethers.Wallet.createRandom();

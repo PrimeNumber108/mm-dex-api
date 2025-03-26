@@ -36,7 +36,7 @@ export class WalletController {
         @Query('page') page: number = 1,
         @Query('pageSize') pageSize: number = 10,
         @Query('address') address?: string
-    ): Promise<{ total: number; wallets: Wallet[] }> {
+    ): Promise<{ total: number; data: Wallet[] }> {
         const service = this.factory.getWalletService("berachain");
         const response = await service.getWallets(page, pageSize, address);
         return response;

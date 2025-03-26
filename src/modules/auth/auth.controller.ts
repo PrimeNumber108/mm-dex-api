@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login')
+  @Post('/login')
   async login(@Body() loginDto: { username: string, apiSecret: string }) {
     return await this.authService.login(loginDto.username, loginDto.apiSecret);
   }
