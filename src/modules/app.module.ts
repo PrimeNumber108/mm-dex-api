@@ -12,7 +12,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { OrderModule } from './order/order.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module'; 
 import { PairModule } from './pair/pair.module';
 
 

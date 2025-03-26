@@ -9,6 +9,8 @@ import * as bcrypt from "bcrypt"; // 🔹 Import bcrypt for hashing
 import { UserDto } from "./dtos/user.dto";
 import { InjectRedis } from "@nestjs-modules/ioredis";
 import Redis from "ioredis";
+import { JwtService } from "@nestjs/jwt";
+
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -17,6 +19,7 @@ export class UserService implements OnModuleInit {
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+        private readonly jwtService: JwtService,
         @InjectRedis() private readonly redis: Redis
     ) { }
 
@@ -128,4 +131,6 @@ export class UserService implements OnModuleInit {
         }
         return false;
     }
+
+  
 }
