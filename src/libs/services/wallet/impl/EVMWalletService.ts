@@ -110,6 +110,9 @@ export class EVMWalletService extends BaseWalletService {
             privateKey: wallet.privateKey,
             cluster: params.cluster,
             chains: [params.chain],
+            type: typeWallet[params.type as keyof typeof typeWallet],
+            accoundId: params.chain+params.symbol+params.type+params.chain.length,
+            symbol: params.symbol,
             index
         })
 

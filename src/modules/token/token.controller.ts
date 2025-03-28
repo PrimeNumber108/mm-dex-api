@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Put, Query } from "@nestjs/common";
-import { ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiSecurity, ApiTags, ApiQuery } from "@nestjs/swagger";
 import { TokenService } from "./token.service";
 import { CreateTokenDto, QueryTokenDto, TokenResponseDto, UpdateTokenDto } from "./token-dto";
 
@@ -12,6 +12,20 @@ export class TokenController {
         private readonly tokenService: TokenService
     ) { }
 
+    @Get('/list-token')
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'pageSize', required: false, type: Number, example: 10 })
+    @ApiQuery({ name: 'address', required: false, type: String, example: '0x123...' })
+    @ApiResponse({ status: 200, type: [TokenResponseDto], description: 'List of wallets with pagination and filtering' })
+    async getWallets(
+        @Query('page') page: number = 1,
+        @Query('pageSize') pageSize: number = 10,
+        @Query('address') address?: string
+    ): Promise<{ total: number; data: TokenResponseDto[] }> {
+        const response = await this.tokenService.getTokens(page, pageSize, address);
+        return response;
+    }
+    
     @Post('/import')
     @ApiResponse({
         status: 201,
@@ -49,6 +63,7 @@ export class TokenController {
         description: 'Token'
     })
     async getToken(@Query() params: QueryTokenDto): Promise<TokenResponseDto> {
+        console.log('paramis: ',params)
         return await this.tokenService.getToken(params);
     }
 

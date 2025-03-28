@@ -42,6 +42,16 @@ export class GenerateWalletDto {
 
     @ApiPropertyOptional({ type: String })
     cluster?: string;
+
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    symbol: string;
+
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    type: typeWallet;
 }
 
 export class ImportClusterDto {

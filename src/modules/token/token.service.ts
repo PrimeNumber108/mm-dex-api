@@ -31,6 +31,27 @@ export class TokenService {
         return JSON.parse(cached) as TokenResponseDto;
     }
 
+    async getTokens(page: number, pageSize: number, address?: string): Promise<{ total: number; data: TokenResponseDto[]  }> {
+            const query = this.tokenRepo.createQueryBuilder('token');
+    
+            // Apply filtering if address is provided
+            if (address) {
+                query.where('token.address = :address', { address });
+            }
+    
+            // Get total count for pagination
+            const total = await query.getCount();
+    
+            // Apply pagination
+            const tokens = await query
+                .orderBy('token.id', 'ASC')
+                .skip((page - 1) * pageSize)
+                .take(pageSize)
+                .getMany();
+    
+            return { total, data: tokens };
+     }
+
     async importToken(
         params: CreateTokenDto
     ): Promise<TokenResponseDto> {
