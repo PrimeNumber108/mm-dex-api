@@ -2,14 +2,20 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
+// import * as compression from 'compression';
+// import * as cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
+
 import helmet from 'helmet';
-import * as morgan from 'morgan';
 import { join } from 'path';
 
 import { env } from './config';
 import { AppModule } from './modules/app.module';
+
+const morgan = require('morgan');  // CommonJS require
+const compression = require('compression');
+const cookieParser = require('cookie-parser');
+
 
 const setMiddleware = (app: NestExpressApplication) => {
   app.use(helmet());

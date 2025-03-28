@@ -20,6 +20,7 @@ const envVarsSchema = Joi.object()
     A8_RPC: Joi.string().required(),
     METIS_RPC: Joi.string().required(),
     ZKSYNC_RPC: Joi.string().required(),
+  
 
     PASSPHRASE: Joi.string().required(),
 
@@ -32,7 +33,10 @@ const envVarsSchema = Joi.object()
     REDIS_HOST: Joi.string().default("localhost"),
 
     ROOT_ADMIN_API_SECRET: Joi.string().required(),
-    TRON_BASE_URL: Joi.string().default('https://api.trongrid.io')
+    TRON_BASE_URL: Joi.string().default('https://api.trongrid.io'),
+    NETWORK: Joi.string().valid('mainnet', 'testnet'),
+    MAINNET_RPC: Joi.string().default('https://rpc.ancient8.gg'),
+    TESTNET_RPC: Joi.string().default('https://rpcv2-testnet.ancient8.gg/'),
   })
   .unknown();
 
@@ -45,6 +49,11 @@ if (error != null) {
 }
 
 export const env = {
+  network: envVars.NETWORK,
+  a8: {
+    mainnetRpc: envVars.MAINNET_RPC,
+    testnetRpc: envVars.TESTNET_RPC
+  },
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   workerPort: envVars.WORKER_PORT,
