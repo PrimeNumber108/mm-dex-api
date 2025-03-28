@@ -67,7 +67,7 @@ export class EVMWalletService extends BaseWalletService {
             cluster: params.cluster,
             chains: [params.chain],
             type: typeWallet[params.type as keyof typeof typeWallet],
-            accoundId: params.chain+params.symbol+params.type+params.chain.length,
+            accoundId: params.chain+"_"+params.symbol+"_"+params.type+"_"+index+"_"+wallet.address.slice(-2),
             symbol: params.symbol,
             index
         })
@@ -111,7 +111,7 @@ export class EVMWalletService extends BaseWalletService {
             cluster: params.cluster,
             chains: [params.chain],
             type: typeWallet[params.type as keyof typeof typeWallet],
-            accoundId: params.chain+params.symbol+params.type+params.chain.length,
+            accoundId: params.chain+"_"+params.symbol+"_"+params.type+"_"+index+"_"+wallet.address.slice(-2),
             symbol: params.symbol,
             index
         })

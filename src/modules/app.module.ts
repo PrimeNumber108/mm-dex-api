@@ -14,6 +14,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { AuthModule } from './auth/auth.module'; 
 import { PairModule } from './pair/pair.module';
+import { LaunchModule } from './launch/launch.module';
+
 
 
 @Module({
@@ -34,6 +36,7 @@ import { PairModule } from './pair/pair.module';
     WalletModule,
     AuthModule,
     OrderModule,
+    LaunchModule
   ],
 
   providers: [
@@ -45,6 +48,5 @@ import { PairModule } from './pair/pair.module';
 })
 export class AppModule implements OnModuleInit {
   constructor(@InjectRedis() private readonly redis: Redis) { }
-
   async onModuleInit() { }
 }
