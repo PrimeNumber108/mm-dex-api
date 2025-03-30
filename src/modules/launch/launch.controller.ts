@@ -49,6 +49,8 @@ export class LaunchController {
     @Post('/distribute')
     async distribution(@Body() { privateKey, chain, cluster, symbol, type }: ImportLaunchDto): Promise<string> {
        
+        //ori wallet, token, middle (address), end, calculate
+        //get private key
         await FundDistribution.distribute(
             {
                 index: 0,
