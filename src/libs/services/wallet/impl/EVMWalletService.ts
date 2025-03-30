@@ -15,6 +15,7 @@ export class EVMWalletService extends BaseWalletService {
         super(chain, walletRepo);
     }
 
+
     async generateCluster(params: GenerateClusterDto): Promise<WalletPrivateResponseDto[]> {
         const records = [];
         for (let i = 0; i < params.numOfKeys; i++) {

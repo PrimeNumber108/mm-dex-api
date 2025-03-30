@@ -13,23 +13,23 @@ export class ImportLaunchDto {
     @ApiProperty({ type: String })
     @IsNotEmpty()
     @IsString()
-    privateKey: string;
+    originalAddress: string;
 
     @ApiProperty({ type: String }) // Made required
     @IsNotEmpty()
     @IsString()
-    chain: string;
+    token: string;
 
-    @ApiPropertyOptional({ type: String })
-    cluster?: string;
-
-    @ApiProperty({ type: String }) // Made required
+    @ApiProperty({ type: [String] })
     @IsNotEmpty()
-    @IsString()
-    symbol: string;
+    middleAddress: string[];
 
-    @ApiProperty({ type: String }) // Made required
+    
+    @ApiProperty({ type: [String] })
     @IsNotEmpty()
-    @IsString()
-    type: typeWallet;
+    endAddress: string[];
+
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    tokenValue: string[];
 }

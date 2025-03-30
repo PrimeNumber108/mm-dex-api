@@ -33,10 +33,10 @@ const amounts5Raw = [
     267, 276
  ];
 
-@ApiTags('Launch')
+@ApiTags('launch')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
 @ApiSecurity('username') // Ensure Swagger includes username
-@Controller('Launch')
+@Controller('launch')
 export class LaunchController {
     // private readonly factory: WalletServiceFactory;
     constructor(
@@ -47,59 +47,34 @@ export class LaunchController {
     }
     
     @Post('/distribute')
-    async distribution(@Body() { privateKey, chain, cluster, symbol, type }: ImportLaunchDto): Promise<string> {
+    async distribution(@Body() { originalAddress, token, middleAddress, endAddress, tokenValue }: ImportLaunchDto): Promise<string> {
        
         //ori wallet, token, middle (address), end, calculate
         //get private key
-        await FundDistribution.distribute(
-            {
-                index: 0,
-                privateKey: veryKeys[0].privateKey,
-                address: veryKeys[0].address
-            },
-            A8_ADDRESS,
-            middleKeys.slice(0, 1),
-            meme5Keys,
-            amounts5Raw.map(a => parseEther(a.toString()))
-        )
+
+        console.log('test value: ',originalAddress, token, middleAddress, endAddress, tokenValue)
+        // await FundDistribution.distribute(
+        //     {
+        //         index: 0,
+        //         privateKey: veryKeys[0].privateKey,
+        //         address: veryKeys[0].address
+        //     },
+        //     A8_ADDRESS,
+        //     middleKeys.slice(0, 1),
+        //     meme5Keys,
+        //     amounts5Raw.map(a => parseEther(a.toString()))
+        // )
      
-        await sleep(10000);
-        //Check balance
-        const balances = await Token.getBalances(
-            meme5Keys.map(k => k.address),
-            [A8_ADDRESS, NATIVE],
-            ['A8', 'ETH']
-        )
-        console.log(balances);
+        // await sleep(10000);
+        // //Check balance
+        // const balances = await Token.getBalances(
+        //     meme5Keys.map(k => k.address),
+        //     [A8_ADDRESS, NATIVE],
+        //     ['A8', 'ETH']
+        // )
+        // console.log(balances);
         return "Distribute Done"
 
-    }
-
-    @Post('/import-wallet')
-    @Roles(UserRole.ADMIN)
-    @ApiResponse({
-        status: 201,
-        type: String,
-        description: 'Encrypted wallet'
-    })
-    async importWallet(@Body() { privateKey, chain, cluster, symbol, type }: ImportLaunchDto): Promise<string> {
-        // const keyPair = await CryptoFEHelper.generateKeypair()
-        // console.log("X25519 Public Key:", keyPair.publicKey)
-        // console.log("X25519 Private Key:", keyPair.privateKey)
-        const params  = {
-            privateKey,
-            chain,
-            cluster,
-            symbol,
-            type
-        }
-
-        const encryptedPrivateKey = await CryptoFEHelper.encryptMessage(privateKey, env.keys.publicKey);
-        params.privateKey = encryptedPrivateKey
-       
-        // const service = this.factory.getWalletService(params.chain);
-        // const response = await service.importWallet(params);
-        return "";
     }
 
 

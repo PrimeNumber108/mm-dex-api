@@ -98,7 +98,8 @@ export class WalletController {
     ): Promise<string> {
         const service = this.factory.getWalletService(params.chain);
         const response = await service.generateWallet(params);
-        return CryptoHelper.encrypt(JSON.stringify(response));
+        console.log('res oke: ',response)
+        return response.address;
     }
 
     @Post('/generate-cluster')
