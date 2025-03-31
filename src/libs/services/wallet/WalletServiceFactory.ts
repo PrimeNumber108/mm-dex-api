@@ -8,6 +8,7 @@ export class WalletServiceFactory {
         readonly walletRepo: Repository<Wallet>
     ) { }
 
+
     getWalletService(chain: string) {
         switch (chain) {
             case "berachain":

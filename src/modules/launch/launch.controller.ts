@@ -13,7 +13,10 @@ import {sleep} from 'src/libs/utils/time'
 import { A8_ADDRESS, NATIVE, PROVIDER } from "src/libs/utils/constants";
 import {CryptoFEHelper} from "../utils/crypto"
 import { env } from 'src/config';
-import { parseEther, Wallet } from "ethers";
+import { parseEther } from "ethers";
+import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFactory";
+import { Wallet } from 'src/modules/wallet/wallet.entity'; 
+
 
 
 // const veryKeys = (require('src/secrets/test/very-keys.json') as Keys.WalletKey[]).slice(0, 1);
@@ -38,45 +41,84 @@ const amounts5Raw = [
 @ApiSecurity('username') // Ensure Swagger includes username
 @Controller('launch')
 export class LaunchController {
-    // private readonly factory: WalletServiceFactory;
+    private readonly walletFactory: WalletServiceFactory;
+    private readonly walletRepo: Repository<Wallet>;  
+    
     constructor(
         @InjectRepository(Launch)
-        walletRepo: Repository<Launch>
+        private readonly launchRepo: Repository<Launch>,  
+
+        @InjectRepository(Wallet)
+        walletRepo: Repository<Wallet>
     ) {
-        // this.factory = new WalletServiceFactory(walletRepo);
+        this.walletRepo = walletRepo; 
+        this.launchRepo = launchRepo;  
+        this.walletFactory = new WalletServiceFactory(this.walletRepo);  
+
     }
     
     @Post('/distribute')
     async distribution(@Body() { originalAddress, token, middleAddress, endAddress, tokenValue }: ImportLaunchDto): Promise<string> {
        
-        //ori wallet, token, middle (address), end, calculate
         //get private key
+        const service = this.walletFactory.getWalletService("ancient8");
 
-        console.log('test value: ',originalAddress, token, middleAddress, endAddress, tokenValue)
-        // await FundDistribution.distribute(
-        //     {
-        //         index: 0,
-        //         privateKey: veryKeys[0].privateKey,
-        //         address: veryKeys[0].address
-        //     },
-        //     A8_ADDRESS,
-        //     middleKeys.slice(0, 1),
-        //     meme5Keys,
-        //     amounts5Raw.map(a => parseEther(a.toString()))
-        // )
+        //Param Original
+        let originalRes = await service.getWallets(1, 10, originalAddress);
+
+        //process middleKey
+        let middleKeysArr = []
+        for (let i = 0; i < middleAddress.length; i++) {
+            let address = middleAddress[i];
+            let middleRes = await service.getWallets(1, 1, address);
+            
+            let walletInfo = {
+                index: i,
+                privateKey: middleRes.data[0]?.privateKey,
+                address: middleRes.data[0]?.address
+            };
+        
+            middleKeysArr.push(walletInfo);
+        }
+        
+        //process endkey
+        let endKeysArr = []
+        for (let i = 0; i < endAddress.length; i++) {
+            let address = endAddress[i];
+            let endRes = await service.getWallets(1, 1, address);
+            
+            let walletInfo = {
+                index: i,
+                privateKey: endRes.data[0]?.privateKey,
+                address: endRes.data[0]?.address
+            };
+        
+            endKeysArr.push(walletInfo);
+        }
      
-        // await sleep(10000);
-        // //Check balance
-        // const balances = await Token.getBalances(
-        //     meme5Keys.map(k => k.address),
-        //     [A8_ADDRESS, NATIVE],
-        //     ['A8', 'ETH']
-        // )
-        // console.log(balances);
+    
+        await FundDistribution.distribute(
+            {
+                index: 0,
+                privateKey: originalRes.data[0]?.privateKey,
+                address: originalRes.data[0]?.address
+            },
+            token,
+            middleKeysArr,
+            endKeysArr,
+            tokenValue.map(a => parseEther(a.toString()))
+        )
+     
+        await sleep(10000);
+        //Check balance
+        const balances = await Token.getBalances(
+            endKeysArr.map(k => k.address),
+            [token, NATIVE],
+            ['A8', 'ETH']
+        )
+        console.log(balances);
         return "Distribute Done"
 
     }
-
-
    
 }

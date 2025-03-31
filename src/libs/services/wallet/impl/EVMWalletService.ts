@@ -72,6 +72,7 @@ export class EVMWalletService extends BaseWalletService {
             symbol: params.symbol,
             index
         })
+        //lasted_index + index_symbol
 
         return await this.walletRepo.save(record);
     }
