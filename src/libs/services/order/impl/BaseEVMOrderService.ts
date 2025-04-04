@@ -269,10 +269,20 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
         const swapper = this.getSwapper(params.protocol);
 
         try {
+            // const txHash = await swapper.executeSwap(
+            //     wallet,
+            //     params.tokenIn  = params.orderSide.toUpperCase() == 'BUY'?  params.tokenIn :params.tokenOut,
+            //     params.tokenOut = params.orderSide.toUpperCase() == 'BUY'? params.tokenOut: params.tokenIn,
+            //     parseUnits(params.amountIn, tokenIn.decimals),
+            //     parseUnits(params.amountOutMin, tokenOut.decimals = params.orderSide.toUpperCase() == 'BUY'?  tokenIn.decimals :tokenOut.decimals),
+            //     recipient,
+            //     BigInt(pair.fee),
+            //     pair.pair
+            // );
             const txHash = await swapper.executeSwap(
                 wallet,
-                params.tokenIn  = params.orderSide == 'BUY'?  params.tokenIn :params.tokenOut,
-                params.tokenOut = params.orderSide == 'BUY'? params.tokenOut: params.tokenIn,
+                params.tokenIn,
+                params.tokenOut,
                 parseUnits(params.amountIn, tokenIn.decimals),
                 parseUnits(params.amountOutMin, tokenOut.decimals),
                 recipient,
@@ -335,7 +345,7 @@ export abstract class BaseEVMOrderService extends BaseOrderService {
                 tokenOut: params.tokenOut,
                 recipient: params.items[idx].recipient,
                 protocol: params.protocol,
-                orderSide: params.orderSide,
+                // orderSide: params.orderSide,
                 amountIn: params.items[idx].amountIn,
                 amountOutMin: params.items[idx].amountOutMin,
                 username: params.username,

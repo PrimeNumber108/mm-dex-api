@@ -27,7 +27,6 @@ export class A8OrderService extends BaseEVMOrderService {
             case "dojo-v2": {
                 return new DojoSwapper();
             }
-
             default: {
                 throw new NotFoundException("Protocol is not supported");
             }

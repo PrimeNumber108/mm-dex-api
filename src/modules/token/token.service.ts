@@ -33,7 +33,6 @@ export class TokenService {
 
     async getTokens(page: number, pageSize: number, address?: string): Promise<{ total: number; data: TokenResponseDto[]  }> {
             const query = this.tokenRepo.createQueryBuilder('token');
-    
             // Apply filtering if address is provided
             if (address) {
                 query.where('token.address = :address', { address });
@@ -95,7 +94,6 @@ export class TokenService {
         }
         const token = await this.getToken(params);
         if (!token) throw new NotFoundException('Token not found!');
-
         return token
     }
 
@@ -106,8 +104,9 @@ export class TokenService {
             const cached = await this.getCachedToken(params.address, params.chain);
             if (cached) return cached;
         }
-
+        console.log('params test: ',params)
         const token = await this.tokenRepo.findOneBy(params);
+        console.log('get token: ',token)
         return token;
     }
 
@@ -129,7 +128,6 @@ export class TokenService {
             await pipeline.exec();
             return true;
         }
-
         return false;
     }
 

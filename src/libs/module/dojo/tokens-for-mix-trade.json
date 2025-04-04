@@ -1,0 +1,9 @@
+{
+    "testnet": [
+        "0x794cb89d45e58a69491a0c56b4e329f0bfb9d8ab",
+        "0x808d3e676cf2c280bd063bb4bcd6d305ea7b825f"
+    ],
+    "mainnet": [
+        "0xD812d616A7C54ee1C8e9c9CD20D72090bDf0d424"
+    ]
+}

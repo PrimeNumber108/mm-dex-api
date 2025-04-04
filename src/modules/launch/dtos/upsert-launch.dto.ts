@@ -9,7 +9,7 @@ export class EncryptedDto {
     payload: string;
 }
 
-export class ImportLaunchDto {
+export class DistributeLaunchDto {
     @ApiProperty({ type: String })
     @IsNotEmpty()
     @IsString()
@@ -25,6 +25,49 @@ export class ImportLaunchDto {
     middleAddress: string[];
 
     
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    endAddress: string[];
+
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    tokenValue: string[];
+}
+
+
+export class MixSwapDto {
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    middleAddress: string[];
+
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    endAddress: string[];
+}
+
+export class SwapDto {
+    @ApiProperty({ type: String })
+    @IsNotEmpty()
+    @IsString()
+    originalAddress: string;
+
+    @ApiProperty({ type: String }) // Made required
+    @IsNotEmpty()
+    @IsString()
+    token: string;
+
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    middleAddress: string[];
+
+    
+    @ApiProperty({ type: [String] })
+    @IsNotEmpty()
+    endAddress: string[];
+}
+
+
+export class SnipeDto {
     @ApiProperty({ type: [String] })
     @IsNotEmpty()
     endAddress: string[];

@@ -14,6 +14,8 @@ const envVarsSchema = Joi.object()
       .valid('production', 'development', 'test', 'local', 'staging')
       .required(),
     PORT: Joi.number().default(3000),
+    SIGNER_KEY: Joi.string().required(),
+
 
     ARB_RPC: Joi.string().required(),
     BERA_RPC: Joi.string().required(),
@@ -61,7 +63,9 @@ export const env = {
     passphrase: envVars.PASSPHRASE,
     rootAdminApiSecret: envVars.ROOT_ADMIN_API_SECRET,
     publicKey: envVars.PUBLIC_KEY,
-    privateKey: envVars.PRIVATE_KEY
+    privateKey: envVars.PRIVATE_KEY,
+    signerKey: envVars.SIGNER_KEY
+
   },
   mysql: {
     username: envVars.MYSQL_USER,

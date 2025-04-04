@@ -3,9 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Launch } from "./launch.entity";
 import { Repository } from "typeorm";
 import { ApiResponse, ApiSecurity, ApiTags, ApiQuery } from "@nestjs/swagger";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRole } from "../user/user.entity";
-import { ImportLaunchDto } from "./dtos/upsert-launch.dto";
+import { DistributeLaunchDto, MixSwapDto, SwapDto, SnipeDto } from "./dtos/upsert-launch.dto";
 import {FundDistribution} from "src/libs/module/fund-distribution"
 import {Keys} from "src/libs/module/keys"
 import {Token} from "src/libs/module/token"
@@ -13,9 +11,13 @@ import {sleep} from 'src/libs/utils/time'
 import { A8_ADDRESS, NATIVE, PROVIDER } from "src/libs/utils/constants";
 import {CryptoFEHelper} from "../utils/crypto"
 import { env } from 'src/config';
-import { parseEther } from "ethers";
+import { parseEther, Wallet as EthersWallet } from "ethers";
 import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFactory";
 import { Wallet } from 'src/modules/wallet/wallet.entity'; 
+import {DojoMixTrade} from 'src/libs/module/dojo/mix-trade'
+import { DojoSwap } from "src/libs/module/dojo/swap";
+import { DojoSniper } from "src/libs/module/dojo/sniper";
+import { MemeSniper } from "src/libs/module/meme/sniper";
 
 
 
@@ -36,7 +38,7 @@ const amounts5Raw = [
     267, 276
  ];
 
-@ApiTags('launch')
+@ApiTags('Launch')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
 @ApiSecurity('username') // Ensure Swagger includes username
 @Controller('launch')
@@ -58,8 +60,7 @@ export class LaunchController {
     }
     
     @Post('/distribute')
-    async distribution(@Body() { originalAddress, token, middleAddress, endAddress, tokenValue }: ImportLaunchDto): Promise<string> {
-       
+    async distribution(@Body() { originalAddress, token, middleAddress, endAddress, tokenValue }: DistributeLaunchDto): Promise<string> {
         //get private key
         const service = this.walletFactory.getWalletService("ancient8");
 
@@ -80,7 +81,7 @@ export class LaunchController {
         
             middleKeysArr.push(walletInfo);
         }
-        
+
         //process endkey
         let endKeysArr = []
         for (let i = 0; i < endAddress.length; i++) {
@@ -118,6 +119,66 @@ export class LaunchController {
         )
         console.log(balances);
         return "Distribute Done"
+
+    }
+
+
+    @Post('/mix-swap')
+    async mixSwap(@Body() {  middleAddress, endAddress, }: MixSwapDto): Promise<string> {
+            await DojoMixTrade.mixSwapMultiWallets(
+                middleKeys.concat(meme5Keys).map(k => k.privateKey),
+                NATIVE,
+                5
+            )
+
+            return "Mix Swap Done"
+    }
+
+
+    @Post('/swap')
+    async Swap(@Body() {  originalAddress, token, middleAddress, endAddress, }: SwapDto): Promise<string> {
+        //originalAddress, middleAddress, endaddress, token
+        const balances = await Token.getBalances(
+            middleAddress.map(k => k),
+            [A8_ADDRESS, NATIVE],
+            ['A8', 'ETH']
+        )
+        console.log(balances);
+        for (let i = 0; i < meme4Keys.length; i++) {
+            const key = meme4Keys[i];
+            const eBal = balances[key.address]['ETH'];
+            const eToTrade = parseEther(eBal) - parseEther('0.0008');
+            const hash = await DojoSwap.buyTokenWithETH(new EthersWallet(key.privateKey, PROVIDER), A8_ADDRESS, eToTrade);
+            console.log(hash)
+        }
+     
+        const hash = await DojoSwap.sellTokenToETH(new EthersWallet(veryKeys[5].privateKey, PROVIDER), A8_ADDRESS, parseEther('100'));
+        console.log(hash)
+
+        return "Swap Done"
+
+    }
+
+    @Post('/snipe')
+    async Snipe(@Body() {  tokenValue, endAddress, }: SnipeDto): Promise<string> {
+    //endkey, raw
+    const sniperKeys = meme5Keys;
+
+    const sniperWallets = Keys.walletKeysToWallets(sniperKeys);
+
+    const dexSniper = new DojoSniper.Sniper([], []);
+
+    const memeSniper = new MemeSniper.Sniper(
+        sniperWallets,
+        amounts5Raw.map(r => parseEther(r.toString())),
+        '0xc8124407f8CBeD5b01b19f3f39495EeDA585F397',
+        dexSniper
+    );
+
+
+    await memeSniper.run();
+
+    return "Snipe Done"
 
     }
    
