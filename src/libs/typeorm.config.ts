@@ -29,9 +29,9 @@ const dataSource = new DataSource({
   entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
   synchronize: false,
   migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
-  extra: {
-    authPlugin: 'mysql_native_password',
-  },
+  // extra: {
+  //   authPlugin: 'mysql_native_password',
+  // },
 });
 
 // Initialize the connection and handle any errors

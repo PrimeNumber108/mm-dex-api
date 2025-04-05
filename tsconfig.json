@@ -14,8 +14,16 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "paths": {
+      "src/*": ["src/*"],
+      "@libs/*": ["libs/*"],
+      "@services/*": ["services/*"]
+
+    }
    
   },
-  "include": ["src/**/*.ts", "src/**/*.json"] // Include JSON files
+  "include": ["src/**/*.ts", "src/**/*.json"], // Include JSON files
+  "exclude": ["node_modules", "dist"]
+
 
 }

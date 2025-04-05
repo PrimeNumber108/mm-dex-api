@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 while getopts s:e: flag
@@ -27,9 +28,17 @@ echo "Building Mm Dex application..."
 npm install
 npm run build  # Change this if your build command is different
 
-# Create a tarball of necessary files (including tsconfig.json)
+# Copy the typeorm.config.ts to the server
+echo "Copying typeorm.config.ts to server..."
+scp src/libs/typeorm.config.ts "$server":/var/www/mm-dex-api/src/libs/
+
+# Generate Typechain types (or any other build command you need)
+echo "Generating Typechain types..."
+npm run typechain:gen
+
+# Create a tarball of necessary files
 echo "Creating tarball..."
-tar czf mm-dex-app.tar.gz dist package.json package-lock.json src/libs/typeorm.config.ts tsconfig.json || {
+tar czf mm-dex-app.tar.gz dist package.json package-lock.json || {
     echo "Error: Failed to create tarball!"
     exit 1
 }
@@ -40,7 +49,7 @@ scp mm-dex-app.tar.gz "$server":/var/www/mm-dex-api/
 
 # Connect to the server and deploy
 echo "Deploying on $server..."
-ssh "$server" << 'EOF'
+ssh "$server" << EOF
     set -e  # Exit on error
 
     cd /var/www/mm-dex-api/
@@ -48,19 +57,13 @@ ssh "$server" << 'EOF'
     # Stop the Mm Dex service before updating files
     sudo systemctl stop mm-dex-api.service
 
-    # Backup the current version
+    # Backup the current version, make sure dist is cleaned
     if [ -d "dist" ]; then
         if [ "$(ls -A dist)" ]; then
-            echo "dist directory is not empty."
-            echo "Removing old dist.old if exists..."
-            sudo rm -rf dist.old
-
-            echo "Renaming dist to dist.old..."
-            sudo mv dist dist.old
-        else
-            echo "dist directory is empty. Removing it."
-            sudo rm -rf dist
+            echo "dist directory is not empty. Cleaning it up."
+            sudo rm -rf dist/*  # Remove all files inside dist, but not the directory itself
         fi
+        sudo mv dist dist.old  # Rename the empty dist directory
     fi
 
     # Extract new version
@@ -70,17 +73,11 @@ ssh "$server" << 'EOF'
     # Install dependencies
     npm install --omit=dev
 
-    # Ensure tsconfig.json exists in the dist directory
-    if [ ! -f "tsconfig.json" ]; then
-        echo "Error: tsconfig.json not found!"
-        exit 1
-    fi
+    # Run migrations
+    echo "Running migrations..."
+    npm run migration:generate
+    npm run migration:up
 
-    # Check if the compiled typeorm.config.js exists
-    if [ ! -f "dist/libs/typeorm.config.js" ]; then
-        echo "Error: dist/libs/typeorm.config.js not found!"
-        exit 1
-    fi
 
     # Restart the Mm Dex service
     sudo systemctl start mm-dex-api.service

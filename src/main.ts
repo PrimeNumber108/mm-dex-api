@@ -22,7 +22,15 @@ const setMiddleware = (app: NestExpressApplication) => {
 
   app.enableCors({
     credentials: true,
-    origin: (_, callback) => callback(null, true),
+    // origin: (_, callback) => callback(null, true),
+    origin: (origin, callback) => {
+      const allowedOrigins = ['http://localhost:5173', 'https://mm-hcm.the20.sg']; // Ensure both localhost and production origins are allowed
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     allowedHeaders: [
       '*',
       'Authorization',
