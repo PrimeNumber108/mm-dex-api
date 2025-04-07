@@ -42,6 +42,13 @@ export const NetworkConfigs: {[key: string]: NetworkConfig} = {
     rpc: env.web3.zksyncRpc,
     currency: "ETH",
     wrappedNative: "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+  },
+  "tron": {
+    chainId: 728126428,
+    name: "tron",
+    rpc: env.web3.tronBase + '/jsonrpc',
+    currency: "TRX",
+    wrappedNative: "TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR"
   }
 }
 

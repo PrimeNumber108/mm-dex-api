@@ -81,7 +81,9 @@ export const env = {
     beraRpc: envVars.BERA_RPC,
     a8Rpc: envVars.A8_RPC,
     metisRpc: envVars.METIS_RPC,
-    zksyncRpc: envVars.ZKSYNC_RPC
+    zksyncRpc: envVars.ZKSYNC_RPC,
+    tronBase: envVars.TRON_BASE_URL,
+
   },
   executor: {
     passphrase: envVars.EXECUTOR_PASSPHRASE,

@@ -81,6 +81,18 @@ export class TokenService {
 
     async assertKnownToken(params: QueryTokenDto): Promise<TokenResponseDto> {
         if (params.address === NATIVE) {
+            if (params.chain === 'tron') {
+                return {
+                    address: NATIVE,
+                    chain: params.chain,
+                    name: 'Tron',
+                    symbol: 'TRX',
+                    decimals: 6,
+                    id: 9999,
+                    created_at: new Date(),
+                    updated_at: new Date()
+                }
+            }
             return {
                 address: NATIVE,
                 chain: params.chain,
@@ -94,6 +106,7 @@ export class TokenService {
         }
         const token = await this.getToken(params);
         if (!token) throw new NotFoundException('Token not found!');
+
         return token
     }
 

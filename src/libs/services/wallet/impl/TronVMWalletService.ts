@@ -58,6 +58,28 @@ export class TronVMWalletService extends BaseWalletService {
         })
         return await this.walletRepo.save(record);
     }
+
+    async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; data: Wallet[]  }> {
+        const query = this.walletRepo.createQueryBuilder('wallet');
+
+        // Apply filtering if address is provided
+        if (address) {
+            query.where('wallet.address = :address', { address });
+        }
+
+        // Get total count for pagination
+        const total = await query.getCount();
+
+        // Apply pagination
+        const wallets = await query
+            .orderBy('wallet.index', 'ASC')
+            .skip((page - 1) * pageSize)
+            .take(pageSize)
+            .getMany();
+
+        return { total, data: wallets };
+    }
+    
     async generateWallet(params: GenerateWalletDto): Promise<WalletPrivateResponseDto> {
         const wallet = TronWeb.createRandom(`${Date.now()}`);
         let index = 0;

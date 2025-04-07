@@ -2,6 +2,8 @@ import { NotFoundException } from "@nestjs/common";
 import { Wallet } from "src/modules/wallet/wallet.entity";
 import { Repository } from "typeorm";
 import { EVMWalletService } from "./impl/EVMWalletService";
+import { TronVMWalletService } from "./impl/TronVMWalletService";
+
 
 export class WalletServiceFactory {
     constructor(
@@ -17,6 +19,8 @@ export class WalletServiceFactory {
             case "arbitrum":
             case "zksync":
                 return new EVMWalletService(chain, this.walletRepo);
+            case "tron":
+                return new TronVMWalletService(chain, this.walletRepo);
             default: {
                 throw new NotFoundException("Chain is not supported")
             }

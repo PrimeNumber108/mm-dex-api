@@ -19,7 +19,9 @@
       "@libs/*": ["libs/*"],
       "@services/*": ["services/*"]
 
-    }
+    },
+    "typeRoots": ["node_modules/@types", "types"]
+
    
   },
   "include": ["src/**/*.ts", "src/**/*.json"], // Include JSON files
