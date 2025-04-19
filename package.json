@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -81,7 +80,7 @@
     "typechain": "^8.3.2",
     "typeorm": "^0.3.20",
     "uuid": "^11.0.3",
-    "web3": "^4.16.0"
+    "web3": "1.8.2"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.1.0",
