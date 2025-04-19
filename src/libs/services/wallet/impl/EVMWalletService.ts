@@ -6,6 +6,7 @@ import { WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { ethers } from "ethers";
 import {CryptoFEHelper} from "src/modules/utils/crypto"
 import { env } from 'src/config';
+import { NotFoundException } from "@nestjs/common";
 
 export class EVMWalletService extends BaseWalletService {
     constructor(
@@ -27,6 +28,7 @@ export class EVMWalletService extends BaseWalletService {
                 privateKey: wallet.privateKey,
                 cluster: params.cluster,
                 index: i,
+                accoundId: params.chain+"_"+i+"_"+wallet.address.slice(-2),
                 chains: [params.chain]
             }))
         }
@@ -76,6 +78,14 @@ export class EVMWalletService extends BaseWalletService {
 
         return await this.walletRepo.save(record);
     }
+
+    // async getWalletByAddress(address: string): Promise<Wallet> {
+    //     const wallet = await this.walletRepo.findOne({ where: { address } });
+    //     if (!wallet) {
+    //         throw new NotFoundException(`Wallet with address ${address} not found`);
+    //     }
+    //     return wallet;
+    // }
 
     async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; data: Wallet[]  }> {
         const query = this.walletRepo.createQueryBuilder('wallet');

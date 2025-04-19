@@ -14,7 +14,9 @@ export class WalletServiceFactory {
     getWalletService(chain: string) {
         switch (chain) {
             case "berachain":
+                return new EVMWalletService(chain, this.walletRepo);
             case "ancient8":
+                return new EVMWalletService(chain, this.walletRepo);
             case "metis":
             case "arbitrum":
             case "zksync":

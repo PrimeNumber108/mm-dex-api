@@ -4,6 +4,7 @@ import { Wallet } from "src/modules/wallet/wallet.entity";
 import { GenerateClusterDto, GenerateWalletDto, ImportClusterDto, ImportWalletDto } from "src/modules/wallet/dtos/upsert-wallet.dto";
 import { WalletPrivateResponseDto } from "src/modules/wallet/dtos/wallet.dto";
 import { TronWeb } from "tronweb";
+import { NotFoundException } from "@nestjs/common";
 
 export class TronVMWalletService extends BaseWalletService {
     constructor(
@@ -96,5 +97,13 @@ export class TronVMWalletService extends BaseWalletService {
         })
 
         return await this.walletRepo.save(record);
+    }
+
+    async getWalletByAddress(address: string): Promise<Wallet> {
+        const wallet = await this.walletRepo.findOne({ where: { address } });
+        if (!wallet) {
+            throw new NotFoundException(`Wallet with address ${address} not found`);
+        }
+        return wallet;
     }
 }

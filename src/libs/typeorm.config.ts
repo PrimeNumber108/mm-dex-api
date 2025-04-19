@@ -27,7 +27,7 @@ const dataSource = new DataSource({
   password: env.mysql.password,
   database: 'mm_executor', // Your database name
   entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
-  synchronize: false,
+  synchronize: true,
   migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
   // extra: {
   //   authPlugin: 'mysql_native_password',

@@ -12,6 +12,9 @@ import { WalletResponseDto } from "./dtos/wallet.dto";
 import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-wallet.dto";
 import {CryptoFEHelper} from "../utils/crypto"
 import { env } from 'src/config';
+import { BadRequestException } from "@nestjs/common";
+
+
 
 
 @ApiTags('Wallet')
@@ -69,6 +72,40 @@ export class WalletController {
         const response = await service.importWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));
     }
+    
+    // @Post('/buy-rarible')
+    // @Roles(UserRole.ADMIN)
+    // @ApiResponse({
+    //     status: 201,
+    //     type: String,
+    //     description: 'Encrypted wallet'
+    // })
+
+    // @Get('/get-wallet')
+    // @ApiResponse({
+    //     status: 200,
+    //     type: WalletResponseDto,
+    //     description: 'Wallet information with decoded private key'
+    // })
+    // async getWallet(@Query('address') address: string): Promise<WalletResponseDto> {
+    //     if (!address) {
+    //         throw new BadRequestException('Address query parameter is required');
+    //     }
+
+    //     const service = this.factory.getWalletService("berachain");
+    //     const wallet = await service.getWalletByAddress(address);
+
+    //     if (!wallet) {
+    //         throw new BadRequestException('Wallet not found');
+    //     }
+    //     //CryptoHelper.decrypt(value)
+    //     // Decrypt the private key
+    //     console.log('wallet: ', wallet)
+    //     return {
+    //         ...wallet,
+    //     };
+
+    // }
 
     @Post('/import-cluster')
     @Roles(UserRole.ADMIN)
@@ -111,10 +148,12 @@ export class WalletController {
     })
     async generateCluster(
         @Body() params: GenerateClusterDto
-    ): Promise<string> {
+    ): Promise<string[]> {
         const service = this.factory.getWalletService(params.chain);
         const response = await service.generateCluster(params);
-        return CryptoHelper.encrypt(JSON.stringify(response));
+        // return CryptoHelper.encrypt(JSON.stringify(response));
+        const addresses = response.map(wallet => wallet.address);
+        return addresses;
     }
 
     @Put('/rename-cluster')
@@ -124,6 +163,7 @@ export class WalletController {
         type: Boolean,
         description: 'Renamed successfully'
     })
+
     async renameCluster(
         @Body() params: RenameClusterDto
     ): Promise<boolean> {

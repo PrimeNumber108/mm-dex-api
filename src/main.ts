@@ -18,28 +18,27 @@ const cookieParser = require('cookie-parser');
 const URLarr = [
   'https://mm.the20.sg',
   'https://mm-hn.the20.sg',
-  'https://mm-hcm.the20.sg',
+  'https://mm-hcm.the20.sg/dex/',
   'http://localhost:3000',
   'https://mm-backup.the20.sg',
 ]
 
-const numberURL = 3 // 3 is staging, 4 is dev, 1 is main, 2 is HN, 5 is backup
-
+const numberURL = 4 // 3 is staging, 4 is dev, 1 is main, 2 is HN, 5 is backup
 
 const setMiddleware = (app: NestExpressApplication) => {
   app.use(helmet());
 
   app.enableCors({
     credentials: true,
-    origin: (_, callback) => callback(null, true),
-    // origin: (origin, callback) => {
-    //   const allowedOrigins = ['http://localhost:5173', 'https://mm-hcm.the20.sg/dex/']; // Ensure both localhost and production origins are allowed
-    //   if (!origin || allowedOrigins.includes(origin)) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error('Not allowed by CORS'));
-    //   }
-    // },
+    // origin: (_, callback) => callback(null, true),
+    origin: (origin, callback) => {
+      const allowedOrigins = ['http://localhost:5173', 'https://mm-hcm.the20.sg/dex','https://mm-hcm.the20.sg']; // Ensure both localhost and production origins are allowed
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     allowedHeaders: [
       '*',
       'Authorization',
@@ -83,7 +82,6 @@ async function bootstrap() {
     const swaggerConfig = new DocumentBuilder()
     .addServer(backendUrl)  
     // .addServer('http://localhost:3000') 
-
       .addApiKey(
         { type: 'apiKey', name: 'x-api-secret', in: 'header' },
         'x-api-secret'
@@ -93,7 +91,6 @@ async function bootstrap() {
         'username'
       )
       .build();
-
 
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('swagger', app, swaggerDocument, {

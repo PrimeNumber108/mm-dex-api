@@ -11,6 +11,7 @@ export abstract class BaseWalletService implements IWalletService {
         readonly chain: string,
         protected readonly walletRepo: Repository<Wallet>
     ) { }
+
     async getClusterAddresses(params: QueryClusterDto): Promise<string[]> {
         const wallets = await this.getCluster(params);
         return wallets.map(w => w.address);
@@ -124,4 +125,33 @@ export abstract class BaseWalletService implements IWalletService {
         throw new Error("Method not implemented.");
     }
 
+    async getWalletByAddress(address: string): Promise<Wallet> {
+        console.log('address:: ',address)
+        const wallet = await this.walletRepo.findOne({ where: { address } });
+        if (!wallet) {
+            throw new NotFoundException(`Wallet with address ${address} not found`);
+        }
+        return wallet;
+    }
+
+    async getWallets(page: number, pageSize: number, address?: string): Promise<{ total: number; data: Wallet[] }> {
+        const query = this.walletRepo.createQueryBuilder('wallet');
+
+        // Apply filtering if address is provided
+        if (address) {
+            query.where('wallet.address = :address', { address });
+        }
+
+        // Get total count for pagination
+        const total = await query.getCount();
+
+        // Apply pagination
+        const wallets = await query
+            .orderBy('wallet.index', 'ASC')
+            .skip((page - 1) * pageSize)
+            .take(pageSize)
+            .getMany();
+
+        return { total, data: wallets };
+    }
 }

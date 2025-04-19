@@ -24,7 +24,7 @@ export class Wallet extends BaseEntity {
   @Column({ nullable: false })
   accoundId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   symbol: string;
 
   @Column({  

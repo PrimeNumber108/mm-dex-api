@@ -6,7 +6,7 @@ export const isLocal = process.env.NODE_ENV === 'local';
 
 const envVarsSchema = Joi.object()
   .keys({
-    EXECUTOR_ENDPOINT: Joi.string().default('https://dex-mm.nysm.work/api'),
+    EXECUTOR_ENDPOINT: Joi.string().default('https://mm-hcm.the20.sg/api'),
     EXECUTOR_USERNAME: Joi.string().required(),
     EXECUTOR_SECRET: Joi.string().required(),
     EXECUTOR_PASSPHRASE: Joi.string().required(),
@@ -92,6 +92,5 @@ export const env = {
     apiUsername: envVars.EXECUTOR_USERNAME
   },
 };
-
 
 
