@@ -27,5 +27,4 @@
   "include": ["src/**/*.ts", "src/**/*.json"], // Include JSON files
   "exclude": ["node_modules", "dist"]
 
-
 }

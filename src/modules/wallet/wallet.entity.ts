@@ -50,3 +50,8 @@ export class Wallet extends BaseEntity {
   })
   chains: string[];
 }
+
+export class BuyRaribleDto {
+  apiKey?: string
+  orderId: string
+}

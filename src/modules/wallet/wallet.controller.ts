@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Wallet } from "./wallet.entity";
+import { Wallet, BuyRaribleDto } from "./wallet.entity";
 import { Repository } from "typeorm";
 import { WalletServiceFactory } from "src/libs/services/wallet/WalletServiceFactory";
 import { ApiResponse, ApiSecurity, ApiTags, ApiQuery } from "@nestjs/swagger";
@@ -13,9 +13,14 @@ import { QueryClusterDto, QueryWalletDto, QueryWalletsDto } from "./dtos/query-w
 import {CryptoFEHelper} from "../utils/crypto"
 import { env } from 'src/config';
 import { BadRequestException } from "@nestjs/common";
-
-
-
+import { createRaribleSdk } from "@rarible/sdk"
+import { toOrderId } from "@rarible/types"
+import { Web3Ethereum } from '@rarible/web3-ethereum'
+import { EthereumWallet } from '@rarible/sdk-wallet'
+import Web3 from 'web3'
+// const { Web3Ethereum } = require('@rarible/web3-ethereum');
+// const { EthereumWallet } = require('@rarible/sdk-wallet');
+// const Web3 = require('web3');
 
 @ApiTags('Wallet')
 @ApiSecurity('x-api-secret') // Ensure Swagger includes x-api-secret
@@ -72,40 +77,73 @@ export class WalletController {
         const response = await service.importWallet(params);
         return CryptoHelper.encrypt(JSON.stringify(response));
     }
-    
-    // @Post('/buy-rarible')
-    // @Roles(UserRole.ADMIN)
-    // @ApiResponse({
-    //     status: 201,
-    //     type: String,
-    //     description: 'Encrypted wallet'
-    // })
 
-    // @Get('/get-wallet')
-    // @ApiResponse({
-    //     status: 200,
-    //     type: WalletResponseDto,
-    //     description: 'Wallet information with decoded private key'
-    // })
-    // async getWallet(@Query('address') address: string): Promise<WalletResponseDto> {
-    //     if (!address) {
-    //         throw new BadRequestException('Address query parameter is required');
-    //     }
 
-    //     const service = this.factory.getWalletService("berachain");
-    //     const wallet = await service.getWalletByAddress(address);
+    @Post('/buy-rarible')
+    @Roles(UserRole.ADMIN)
+    @ApiResponse({
+        status: 201,
+        type: String,
+        description: 'Encrypted wallet'
+    })
+    async buyRarible(@Body() { apiKey, orderId }: BuyRaribleDto): Promise<string> {
+       
+        // orderId = 'ETHEREUM:0xae9341085183801826ef2ad3dc5d834904361f3e'
+        // const sdk = createRaribleSdk(wallet, "prod")
 
-    //     if (!wallet) {
-    //         throw new BadRequestException('Wallet not found');
-    //     }
-    //     //CryptoHelper.decrypt(value)
-    //     // Decrypt the private key
-    //     console.log('wallet: ', wallet)
-    //     return {
-    //         ...wallet,
-    //     };
+        const RARIBLE_ENV = 'prod' // or 'testnet'
+        const PRIVATE_KEY = process.env.PRIVATE_KEY as string
+        const PROVIDER_URL = process.env.ETH_RPC_URL as string // e.g. Infura or Alchemy mainnet endpoint
 
-    // }
+        const web3 = new Web3(new Web3.providers.HttpProvider(PROVIDER_URL))
+        const account = web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY)
+        web3.eth.accounts.wallet.add(account)
+        web3.eth.defaultAccount = account.address
+
+        const web3Eth = new Web3Ethereum({ web3 })
+        const wallet = new EthereumWallet(web3Eth)
+
+        const sdk = createRaribleSdk(wallet, RARIBLE_ENV, {
+        apiKey: apiKey,
+        })
+        const buyTx = await sdk.order.buy({
+            orderId: toOrderId(orderId),
+            amount: 1,
+            //optional
+            infiniteApproval: true,
+        })
+        //If you have one or more items from collection you should accept one item at the time
+        await buyTx.wait()
+        return 'success'
+    }
+
+
+
+    @Get('/get-wallet')
+    @ApiResponse({
+        status: 200,
+        type: WalletResponseDto,
+        description: 'Wallet information with decoded private key'
+    })
+    async getWallet(@Query('address') address: string): Promise<WalletResponseDto> {
+        if (!address) {
+            throw new BadRequestException('Address query parameter is required');
+        }
+
+        const service = this.factory.getWalletService("berachain");
+        const wallet = await service.getWalletByAddress(address);
+
+        if (!wallet) {
+            throw new BadRequestException('Wallet not found');
+        }
+        //CryptoHelper.decrypt(value)
+        // Decrypt the private key
+        console.log('wallet: ', wallet)
+        return {
+            ...wallet,
+        };
+
+    }
 
     @Post('/import-cluster')
     @Roles(UserRole.ADMIN)
