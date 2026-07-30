@@ -405,3 +405,4 @@ contracts
 .vscode/*
 
 data
+*.tar.gz

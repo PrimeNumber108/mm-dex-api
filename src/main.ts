@@ -15,15 +15,6 @@ import { AppModule } from './modules/app.module';
 const morgan = require('morgan');  // CommonJS require
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
-const URLarr = [
-  'https://mm.the20.sg',
-  'https://mm-hn.the20.sg',
-  'https://mm-hcm.the20.sg/dex/',
-  'http://localhost:3000',
-  'https://mm-backup.the20.sg',
-]
-
-const numberURL = 4 // 3 is staging, 4 is dev, 1 is main, 2 is HN, 5 is backup
 
 const setMiddleware = (app: NestExpressApplication) => {
   app.use(helmet());
@@ -73,15 +64,11 @@ async function bootstrap() {
   setMiddleware(app);
 
 
-  const backendUrl = process.env.NODE_ENV !== 'production'
-    ? URLarr[numberURL-1]  // Production URL
-    : 'http://localhost:3000';    // Local development URL
-
+  const backendUrl = process.env.APP_URL || `http://localhost:${env.port}`;
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-    .addServer(backendUrl)  
-    // .addServer('http://localhost:3000') 
+      .addServer(backendUrl) 
       .addApiKey(
         { type: 'apiKey', name: 'x-api-secret', in: 'header' },
         'x-api-secret'

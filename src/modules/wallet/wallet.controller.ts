@@ -122,10 +122,10 @@ export class WalletController {
     @Get('/get-wallet')
     @ApiResponse({
         status: 200,
-        type: WalletResponseDto,
-        description: 'Wallet information with decoded private key'
+        type: String,
+        description: 'Encrypted wallet'
     })
-    async getWallet(@Query('address') address: string): Promise<WalletResponseDto> {
+    async getWallet(@Query('address') address: string): Promise<string> {
         if (!address) {
             throw new BadRequestException('Address query parameter is required');
         }
@@ -136,13 +136,8 @@ export class WalletController {
         if (!wallet) {
             throw new BadRequestException('Wallet not found');
         }
-        //CryptoHelper.decrypt(value)
-        // Decrypt the private key
-        console.log('wallet: ', wallet)
-        return {
-            ...wallet,
-        };
 
+        return CryptoHelper.encrypt(JSON.stringify(wallet));
     }
 
     @Post('/import-cluster')
