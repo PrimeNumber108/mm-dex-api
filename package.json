@@ -127,26 +127,5 @@
     "glob": "^10.4.5",
     "multer": "^1.4.5-lts.1",
     "vitest": "^2.1.8"
-  },
-  "resolutions": {
-    "axios": "^1.8.4",
-    "ws": "^8.18.0",
-    "tar": "^7.5.21",
-    "sha.js": "^2.4.11",
-    "tmp": "^0.2.3",
-    "picomatch": "^4.0.4",
-    "postcss": "^8.5.18",
-    "rollup": "^4.58.1",
-    "serialize-javascript": "^7.0.5",
-    "socket.io-parser": "^4.2.6",
-    "form-data": "^4.0.2",
-    "qs": "^6.14.0",
-    "fast-xml-parser": "^4.5.3",
-    "tough-cookie": "^4.1.4",
-    "express": "^4.21.2",
-    "lodash": "^4.17.21",
-    "glob": "^10.4.5",
-    "multer": "^1.4.5-lts.1",
-    "vitest": "^2.1.8"
   }
 }
