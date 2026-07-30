@@ -1,16 +1,38 @@
-import * as CryptoJS from 'crypto-js';
+import * as crypto from 'crypto';
 import { env } from 'src/config';
 
 export namespace CryptoHelper {
-  export const encrypt = (text: string, secret?: string) => {
+  const ALGORITHM = 'aes-256-cbc';
+  const SALT_LENGTH = 16;
+  const IV_LENGTH = 16;
+  const KEY_LENGTH = 32;
+  const ITERATIONS = 100000;
+
+  export const encrypt = (text: string, secret?: string): string => {
     const passphrase = secret ?? env.keys.passphrase;
-    return CryptoJS.AES.encrypt(text, passphrase).toString();
+    const salt = crypto.randomBytes(SALT_LENGTH);
+    const key = crypto.pbkdf2Sync(passphrase, salt, ITERATIONS, KEY_LENGTH, 'sha256');
+    const iv = crypto.randomBytes(IV_LENGTH);
+    const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return `${salt.toString('hex')}:${iv.toString('hex')}:${encrypted}`;
   };
 
-  export const decrypt = (ciphertext: string, secret?: string) => {
+  export const decrypt = (ciphertext: string, secret?: string): string => {
     const passphrase = secret ?? env.keys.passphrase;
-    const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText;
+    const parts = ciphertext.split(':');
+    if (parts.length !== 3) {
+      // Fallback for legacy ciphertext if needed
+      return ciphertext;
+    }
+    const salt = Buffer.from(parts[0], 'hex');
+    const iv = Buffer.from(parts[1], 'hex');
+    const encryptedText = parts[2];
+    const key = crypto.pbkdf2Sync(passphrase, salt, ITERATIONS, KEY_LENGTH, 'sha256');
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
   };
 }
