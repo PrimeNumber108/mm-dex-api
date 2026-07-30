@@ -94,7 +94,7 @@
     "@types/node": "^20.11.16",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
@@ -107,9 +107,10 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3",
     "unplugin-swc": "^1.5.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.8"
   },
   "overrides": {
+    "axios": "$axios",
     "ws": "^8.18.0",
     "tar": "^7.5.21",
     "sha.js": "^2.4.11",
@@ -124,6 +125,8 @@
     "fast-xml-parser": "^4.5.3",
     "tough-cookie": "^4.1.4",
     "express": "^4.21.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "glob": "^10.4.5",
+    "multer": "^1.4.5-lts.1"
   }
 }
