@@ -51,9 +51,10 @@ export class TronOrderService extends BaseOrderService {
 
         try {
             const tx = await TronVMTokenHelper.transferToken(senderWallet.privateKey, token.address, params.recipient, parseUnits(params.amount, token.decimals));
+            const txHash = typeof tx === 'string' ? tx : (tx as any)?.txid || (tx as any)?.transaction?.txID || JSON.stringify(tx);
             const record = this.transferRepo.create({
                 ...params,
-                txHash: tx,
+                txHash,
             });
 
             return await this.transferRepo.save(record);
@@ -76,6 +77,7 @@ export class TronOrderService extends BaseOrderService {
             const recipient = recipients[i];
             try {
                 const tx = await TronVMTokenHelper.transferToken(wallet.privateKey, token.address, recipient, amount);
+                const txHash = typeof tx === 'string' ? tx : (tx as any)?.txid || (tx as any)?.transaction?.txID || JSON.stringify(tx);
                 const transferCreationDto: CreateTransferOrderDto = {
                     token: params.token,
                     recipient,
@@ -83,7 +85,7 @@ export class TronOrderService extends BaseOrderService {
                     username: params.username,
                     chain: params.chain,
                     account: params.account,
-                    txHash: tx
+                    txHash
                 }
 
                 creationDtos.push(transferCreationDto);
@@ -105,6 +107,7 @@ export class TronOrderService extends BaseOrderService {
 
                     const amount = parseUnits(params.amounts[idx], token.decimals);
                     const tx = await TronVMTokenHelper.transferToken(wallet.privateKey, token.address, params.recipient, amount);
+                    const txHash = typeof tx === 'string' ? tx : (tx as any)?.txid || (tx as any)?.transaction?.txID || JSON.stringify(tx);
 
                     const creationDto: CreateTransferOrderDto = {
                         token: token.address,
@@ -113,7 +116,7 @@ export class TronOrderService extends BaseOrderService {
                         username: params.username,
                         chain: params.chain,
                         account: wallet.address,
-                        txHash: tx
+                        txHash
                     }
 
                     return creationDto;
@@ -133,9 +136,10 @@ export class TronOrderService extends BaseOrderService {
 
         try {
             const tx = await TronVMTokenHelper.transferToken(senderWallet.privateKey, token.address, params.recipient, parseUnits(params.amount, token.decimals));
+            const txHash = typeof tx === 'string' ? tx : (tx as any)?.txid || (tx as any)?.transaction?.txID || JSON.stringify(tx);
             const record = this.withdrawalRepo.create({
                 ...params,
-                txHash: tx
+                txHash
             });
 
             return await this.withdrawalRepo.save(record);
