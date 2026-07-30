@@ -1,6 +1,9 @@
 import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
-dotenv.config();
+
+const nodeEnv = process.env.NODE_ENV || 'local';
+dotenv.config({ path: `.env.${nodeEnv}` });
+dotenv.config({ path: '.env' });
 
 export const isLocal = process.env.NODE_ENV === 'local';
 
@@ -14,6 +17,7 @@ const envVarsSchema = Joi.object()
       .valid('production', 'development', 'test', 'local', 'staging')
       .required(),
     PORT: Joi.number().default(3000),
+    APP_URL: Joi.string().optional(),
     SIGNER_KEY: Joi.string().required(),
 
 
@@ -36,6 +40,7 @@ const envVarsSchema = Joi.object()
 
     ROOT_ADMIN_API_SECRET: Joi.string().required(),
     TRON_BASE_URL: Joi.string().default('https://api.trongrid.io'),
+    TRON_DEFAULT_PRIVATE_KEY: Joi.string().optional().allow(''),
     NETWORK: Joi.string().valid('mainnet', 'testnet'),
     MAINNET_RPC: Joi.string().default('https://rpc.ancient8.gg'),
     TESTNET_RPC: Joi.string().default('https://rpcv2-testnet.ancient8.gg/'),
